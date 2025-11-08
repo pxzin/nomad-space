@@ -193,6 +193,8 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 ### Estilo Artístico
 
 - **Pixel Art**: 16-bit inspirado, moderno e limpo
+- **Perspectiva**: Top-down (visão de cima)
+- **Background**: Efeito Parallax para simular uma galáxia infinita e dinâmica.
 - **Paleta de Cores**:
   - Primária: Azul escuro (#1a1a2e), Azul médio (#16213e), Azul claro (#0f3460)
   - Secundária: Roxo (#533483), Rosa (#f39c12), Branco (#ecf0f1)
@@ -235,6 +237,9 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 
 ### Controles de Teclado/Mouse
 
+- **Controles Principais**: Teclado e Mouse.
+- **Movimentação da Nave**: A nave pode se deslocar em todas as direções.
+- **Câmera**: Inicialmente, a câmera acompanha a nave. Futuramente, haverá um modo de câmera livre para visualização do cenário sem deslocamento da nave.
 - **WASD**: Movimento básico
 - **Mouse**: Mira e interação
 - **Scroll**: Zoom in/out

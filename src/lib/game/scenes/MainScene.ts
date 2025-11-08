@@ -1,10 +1,16 @@
 import { Scene } from 'phaser';
+import { Player } from '../entities/Player';
+import { ParallaxBackground } from '../systems/ParallaxBackground';
 
 /**
  * Cena principal do jogo
  * Responsável pelo gameplay core: exploração, construção e gerenciamento
  */
 export class MainScene extends Scene {
+	private player!: Player;
+	private background!: ParallaxBackground;
+	private debugText?: Phaser.GameObjects.Text;
+
 	constructor() {
 		super({ key: 'MainScene' });
 	}
@@ -21,52 +27,84 @@ export class MainScene extends Scene {
 	 * Inicializa a cena e cria objetos do jogo
 	 */
 	create(): void {
-		// Adicionar texto de teste
-		this.add.text(960, 540, 'Nomad Space - Protótipo', {
-			fontFamily: 'Inter',
-			fontSize: '48px',
-			color: '#ecf0f1'
-		}).setOrigin(0.5);
+		// Definir bounds do mundo
+		const worldWidth = 4000;
+		const worldHeight = 4000;
+		this.physics.world.setBounds(-worldWidth / 2, -worldHeight / 2, worldWidth, worldHeight);
 
-		// Adicionar texto informativo
-		this.add.text(960, 620, 'Engine: Phaser + Svelte + TypeScript', {
-			fontFamily: 'Inter',
-			fontSize: '24px',
-			color: '#2ecc71'
-		}).setOrigin(0.5);
+		// Criar background parallax
+		this.background = new ParallaxBackground(this);
 
-		// Adicionar instruções temporárias
-		this.add.text(960, 700, 'Ambiente de desenvolvimento configurado!', {
-			fontFamily: 'Inter',
-			fontSize: '18px',
-			color: '#f39c12'
-		}).setOrigin(0.5);
+		// Criar jogador no centro do mundo
+		this.player = new Player(this, 0, 0);
 
-		// Background com estrelas (exemplo simples)
-		this.createStarfield();
+		// Configurar câmera para seguir o jogador
+		this.cameras.main.startFollow(this.player.sprite, true, 0.1, 0.1);
+		this.cameras.main.setBounds(-worldWidth / 2, -worldHeight / 2, worldWidth, worldHeight);
+		this.cameras.main.setZoom(1);
+
+		// Criar UI de debug (fixo na tela, não segue câmera)
+		this.createDebugUI();
+
+		// Instruções
+		this.add
+			.text(0, -400, 'Use WASD ou Setas para mover | A nave rotaciona na direção do movimento', {
+				fontFamily: 'Inter',
+				fontSize: '18px',
+				color: '#2ecc71',
+				backgroundColor: '#1a1a2e',
+				padding: { x: 10, y: 5 }
+			})
+			.setOrigin(0.5)
+			.setScrollFactor(0)
+			.setDepth(100);
+	}
+
+	/**
+	 * Cria UI de debug com informações do jogador
+	 */
+	private createDebugUI(): void {
+		this.debugText = this.add.text(10, 10, '', {
+			fontFamily: 'Fira Code',
+			fontSize: '14px',
+			color: '#2ecc71',
+			backgroundColor: '#1a1a2e',
+			padding: { x: 8, y: 5 }
+		});
+
+		this.debugText.setScrollFactor(0); // Fixo na tela
+		this.debugText.setDepth(1000);
 	}
 
 	/**
 	 * Update loop do jogo - executado a cada frame
 	 */
 	update(time: number, delta: number): void {
-		// TODO: Atualizar lógica do jogo
+		// Atualizar player
+		this.player.update();
+
+		// Atualizar background
+		this.background.update(delta);
+
+		// Atualizar debug info
+		this.updateDebugInfo();
 	}
 
 	/**
-	 * Cria um campo de estrelas simples para o background
+	 * Atualiza informações de debug
 	 */
-	private createStarfield(): void {
-		const graphics = this.add.graphics();
-		graphics.fillStyle(0xffffff, 1);
+	private updateDebugInfo(): void {
+		if (!this.debugText) return;
 
-		// Criar 200 estrelas aleatórias
-		for (let i = 0; i < 200; i++) {
-			const x = Phaser.Math.Between(0, 1920);
-			const y = Phaser.Math.Between(0, 1080);
-			const size = Phaser.Math.Between(1, 3);
+		const pos = this.player.getPosition();
+		const vel = this.player.getVelocity();
+		const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y);
 
-			graphics.fillCircle(x, y, size);
-		}
+		this.debugText.setText([
+			`Posição: (${Math.round(pos.x)}, ${Math.round(pos.y)})`,
+			`Velocidade: ${Math.round(speed)} px/s`,
+			`Vel X: ${Math.round(vel.x)} | Vel Y: ${Math.round(vel.y)}`,
+			`FPS: ${Math.round(this.game.loop.actualFps)}`
+		]);
 	}
 }

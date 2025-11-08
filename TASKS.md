@@ -65,23 +65,40 @@
 - [x] Documentar solução do problema SSR
 - [x] Criar TASKS.md (este arquivo)
 
+#### 1.8 Controles Básicos, Câmera e Background (TAREFA 002 - ✅ CONCLUÍDA)
+**Origem**: `.ai/tasks/002-implement-basic-controls-and-camera.md`
+**Data de conclusão**: 08/11/2025
+
+- [x] Criar classe Player (Nave-Mãe)
+  - Arquivo: [src/lib/game/entities/Player.ts](src/lib/game/entities/Player.ts)
+  - Triângulo branco com borda verde
+  - Física Arcade integrada
+- [x] Implementar Background Parallax (2-3 camadas)
+  - Arquivo: [src/lib/game/systems/ParallaxBackground.ts](src/lib/game/systems/ParallaxBackground.ts)
+  - 3 camadas com scroll factors 0.3, 0.6, 1.0
+  - ~350 estrelas com tamanhos e cores variadas
+- [x] Adicionar sprite da nave (placeholder simples)
+  - Triângulo branco com outline verde
+  - Rotação baseada na direção do movimento
+- [x] Implementar controles WASD
+  - WASD + Arrow keys como alternativa
+  - Normalização diagonal para velocidade consistente
+- [x] Aplicar física de movimento
+  - Aceleração: 300 px/s²
+  - Velocidade máxima: 400 px/s
+  - Drag: 200 (desaceleração suave)
+- [x] Configurar câmera para seguir jogador
+  - `camera.startFollow()` com lerp 0.1
+  - Mundo 4000x4000 px
+  - Debug UI com posição, velocidade e FPS
+
 ---
 
 ## 📋 Tarefas Pendentes
 
 ### Fase 1: Protótipo (Em Andamento)
 
-#### 1.8 Sistema Básico de Movimento (PRÓXIMO)
-- [ ] Criar classe Player/Ship
-  - Localização: `src/lib/game/entities/Player.ts`
-- [ ] Implementar controles WASD
-  - Sistema de input do Phaser
-- [ ] Adicionar movimento com física arcade
-- [ ] Implementar rotação com mouse
-- [ ] Adicionar aceleração/desaceleração
-- [ ] Testar movimento em todas as direções
-
-#### 1.9 Assets Visuais Básicos
+#### 1.9 Assets Visuais Básicos (PRÓXIMO)
 - [ ] Criar sprite temporário para nave (pixel art)
   - Localização: `static/assets/sprites/player-ship.png`
 - [ ] Criar sprites para recursos (ferro, silício)
@@ -233,27 +250,27 @@
 
 ### Por Fase
 - **Fase 0 - Planejamento**: ✅ 100% (4/4)
-- **Fase 1 - Setup**: ✅ 100% (7/7 subtarefas concluídas)
-- **Fase 1 - Protótipo**: ⏳ 0% (0/8 subtarefas restantes)
+- **Fase 1 - Setup**: ✅ 100% (7/7 subtarefas)
+- **Fase 1 - Protótipo**: ⏳ 12.5% (1/8 subtarefas - Tarefa 1.8 concluída)
 - **Fase 2 - Alpha**: ⏳ 0%
 - **Fase 3 - Beta**: ⏳ 0%
 - **Fase 4 - Release**: ⏳ 0%
 
 ### Estatísticas
-- **Total de tarefas concluídas**: 11
-- **Total de tarefas pendentes**: 40+
-- **Próxima tarefa**: Sistema Básico de Movimento (1.8)
-- **Tempo estimado para próxima**: 2-4 horas
+- **Total de tarefas concluídas**: 12 (incluindo Tarefa 002)
+- **Total de tarefas pendentes**: 39+
+- **Próxima tarefa**: Assets Visuais Básicos (1.9)
+- **Última atualização**: 08/11/2025
 
 ---
 
 ## 🎯 Prioridades Atuais
 
-1. **ALTA**: Sistema de movimento (Tarefa 1.8)
-2. **ALTA**: Assets visuais básicos (Tarefa 1.9)
-3. **MÉDIA**: Sistema de câmera (Tarefa 1.10)
-4. **MÉDIA**: HUD básico (Tarefa 1.12)
-5. **BAIXA**: Sistema de coleta (Tarefa 1.13)
+1. **ALTA**: Assets visuais básicos (Tarefa 1.9)
+2. **MÉDIA**: HUD básico (Tarefa 1.12)
+3. **MÉDIA**: Sistema de coleta (Tarefa 1.13)
+4. **BAIXA**: Sistema de construção simples (Tarefa 1.14)
+5. **BAIXA**: Save/Load (Tarefa 1.15)
 
 ---
 
