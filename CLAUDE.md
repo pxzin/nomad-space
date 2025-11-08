@@ -17,7 +17,13 @@
 
 ## 🎮 Projeto: Nomad Space
 
-**Tecnologias**: A definir conforme discussão com Agente
+**Tecnologias**:
+- **Engine**: Phaser
+- **Frontend/UI**: Svelte (com preferência pelo rune mode)
+- **Servidor/Estrutura**: SvelteKit
+- **Estilização**: UnoCSS
+- **Linguagem**: TypeScript
+- **Gerenciador de Pacotes**: pnpm
 **Arquitetura**: A ser estabelecida
 **Status**: Aguardando especificações técnicas
 
@@ -157,7 +163,7 @@ Aguardando definições do Agente Organizador
 
 ## 📋 TODO Técnico (Aguardando Especificações)
 
-- [ ] Definir stack tecnológica
+- [x] Definir stack tecnológica
 - [ ] Estruturar arquitetura base
 - [ ] Configurar ambiente de desenvolvimento
 - [ ] Implementar protótipo inicial

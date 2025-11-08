@@ -308,11 +308,13 @@ O jogador assume o papel de um explorador espacial nômade que deve sobreviver, 
 
 ## 🚀 Implementação Técnica
 
-### Tecnologias Sugeridas
+### Tecnologias Definidas
 
-- **Frontend**: HTML5 Canvas ou WebGL
-- **Linguagem**: JavaScript/TypeScript
-- **Framework**: Phaser.js ou engine custom
+- **Engine**: Phaser
+- **Frontend/UI**: Svelte (com preferência pelo rune mode)
+- **Servidor/Estrutura**: SvelteKit
+- **Estilização**: UnoCSS
+- **Linguagem**: TypeScript
 - **Armazenamento**: LocalStorage para saves
 - **Futuro**: WebSockets para multiplayer
 

@@ -53,12 +53,15 @@ nomad-space/
 - **Resolução Base**: 1920x1080 com escalonamento responsivo
 - **Tema Visual**: Minimalista com elementos de ficção científica
 
-### 🔧 Tecnologias Sugeridas
-- **Frontend**: HTML5 Canvas / WebGL
-- **Linguagem**: JavaScript/TypeScript
-- **Framework**: A definir (Canvas puro, Phaser, PixiJS)
-- **Backend**: Node.js (para multiplayer futuro)
-- **Banco de Dados**: A definir conforme necessidade
+### 🔧 Tecnologias
+- **Engine**: Phaser
+- **Frontend/UI**: Svelte (com preferência pelo rune mode)
+- **Servidor/Estrutura**: SvelteKit
+- **Estilização**: UnoCSS
+- **Linguagem**: TypeScript
+- **Gerenciador de Pacotes**: pnpm
+- **Backend (Futuro)**: Node.js
+- **Banco de Dados**: A definir
 
 ---
 
