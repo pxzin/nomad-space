@@ -12,29 +12,20 @@
 
 ### Gênero
 
-- Exploração Espacial 2D
-- Construção de Base
-- Survival/Crafting
-- Sandbox
+- **Principal**: Gestão de Nave-Mãe (Mobile Base Management)
+- **Secundários**: Exploração Espacial 2D, Progressão Tecnológica, Aventura
+- **Modos Futuros**: Construção de Base Estática (Sandbox), Survival Hardcore
 
 ### Plataforma
 
 - Web Browser (HTML5)
 - Desktop (Chrome, Firefox, Safari, Edge)
-- Mobile (Futuro)
 
 ### Público-Alvo
 
 - **Idade**: 12+ anos
-- **Perfil**: Jogadores casuais e hardcore
-- **Interesses**: Ficção científica, exploração, construção, crafting
-
-### Tempo de Desenvolvimento Estimado
-
-- **Protótipo**: 2-3 semanas
-- **Alpha**: 2-3 meses
-- **Beta**: 4-6 meses
-- **Release**: 6-8 meses
+- **Perfil**: Jogadores que gostam de progressão, exploração e gerenciamento.
+- **Interesses**: Ficção científica, naves espaciais, automação, descoberta.
 
 ---
 
@@ -42,20 +33,20 @@
 
 ### Conceito Principal
 
-O jogador assume o papel de um explorador espacial nômade que deve sobreviver, explorar e construir bases em diferentes planetas e asteroides. O jogo combina elementos de exploração, construção, gerenciamento de recursos e descoberta científica.
+O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e principal ferramenta de exploração. O objetivo é viajar por sistemas estelares desconhecidos, aprimorando a nave através de um sistema de módulos, pesquisando novas tecnologias e descobrindo os segredos do universo. O foco inicial do desenvolvimento será exclusivamente na experiência da Nave-Mãe.
 
-### Pillares de Design
+### Pilares de Design
 
-1. **Exploração**: Descobrir novos mundos, recursos e tecnologias
-2. **Construção**: Criar bases funcionais e esteticamente agradáveis
-3. **Sobrevivência**: Gerenciar recursos vitais como oxigênio, energia e combustível
-4. **Progressão**: Desbloquear novas tecnologias e expandir capacidades
+1.  **Progressão da Nave**: A Nave-Mãe é o centro de tudo. Aprimorá-la é o principal objetivo.
+2.  **Exploração com Propósito**: Cada viagem tem o objetivo de encontrar recursos ou dados para o próximo aprimoramento.
+3.  **Gerenciamento Estratégico**: Balancear energia, suporte de vida e capacidade de produção através de módulos.
+4.  **Descoberta Contínua**: O universo está cheio de tecnologias, eventos e histórias a serem encontrados.
 
 ### Tom e Atmosfera
 
 - **Visual**: Pixel art minimalista com paleta espacial (azuis, roxos, brancos)
 - **Sonoro**: Ambient espacial com efeitos sintéticos suaves
-- **Narrativa**: Misteriosa e contemplativa, focada na solidão e descoberta
+- **Narrativa**: Misteriosa e contemplativa, focada na jornada e na evolução da sua nave.
 
 ---
 
@@ -63,38 +54,32 @@ O jogador assume o papel de um explorador espacial nômade que deve sobreviver, 
 
 ### Mecânicas Principais
 
-#### 1. Exploração Espacial
+#### 1. Gerenciamento da Nave-Mãe (Base Móvel)
 
-- **Movimentação**: Controle suave da nave espacial
-- **Descoberta**: Encontrar planetas, asteroides e detritos espaciais
-- **Mapeamento**: Sistema de mapa que se revela conforme exploração
-- **Recursos**: Diferentes tipos de recursos em cada local
+- **Sistema de Slots**: A nave possui um número limitado de slots onde o jogador pode instalar e aprimorar módulos. A gestão desses slots é um desafio estratégico.
+- **Categorias de Módulos**:
+    - **Produção/Pesquisa**: Refinarias, Laboratórios, Fábricas, Armazenamento. Essenciais para a progressão tecnológica.
+    - **Exploração/Movimento**: Motores de dobra, Scanners, Propulsores. Permitem alcançar novos locais.
+    - **Sobrevivência/Suporte**: Geradores de Energia, Sistemas de Oxigênio, Dormitórios. Mantêm a nave e a tripulação operacionais.
+    - **Defesa/Combate**: Escudos, Armas a laser, Sistemas de Reparo. Protegem contra perigos espaciais.
+- **Ciclo de Aprimoramento**: O ciclo principal é: **Aprimorar -> Pesquisar -> Explorar -> Coletar -> Repetir**.
 
-#### 2. Construção de Base
+#### 2. Exploração Espacial
 
-- **Sistema de Grid**: Construção baseada em tiles
-- **Módulos**: Diferentes tipos de estruturas (habitação, energia, produção)
-- **Conexões**: Sistema de tubulações e cabos de energia
-- **Expansão**: Possibilidade de construir em múltiplos locais
+- **Mapa Estelar**: Navegação através de um mapa de sistemas estelares, com informações reveladas por scanners.
+- **Pontos de Interesse**: Planetas, asteroides, anomalias e naves abandonadas que podem ser investigados para obter recursos e dados.
+- **Eventos Dinâmicos**: Chuvas de meteoros, tempestades solares e outros eventos que afetam a navegação e exigem resposta do jogador.
 
 #### 3. Gerenciamento de Recursos
 
-- **Recursos Básicos**:
-  - Ferro (construção básica)
-  - Silício (eletrônicos)
-  - Hidrogênio (combustível)
-  - Oxigênio (sobrevivência)
-  - Energia (operação de sistemas)
-- **Recursos Avançados**:
-  - Elementos raros para tecnologias avançadas
-  - Cristais energéticos
-  - Compostos orgânicos
+- **Coleta**: Uso de drones ou expedições para coletar recursos de pontos de interesse.
+- **Processamento**: Recursos brutos são processados em materiais úteis nas refinarias da Nave-Mãe.
+- **Recursos Essenciais**: Energia, Combustível, Integridade da Nave, e materiais de construção de módulos.
 
 #### 4. Sistema de Tecnologia
 
-- **Árvore de Pesquisa**: Desbloquear novas construções e capacidades
-- **Laboratórios**: Estruturas dedicadas à pesquisa
-- **Descobertas**: Encontrar tecnologias alienígenas
+- **Árvore de Pesquisa**: Desbloquear novos módulos, aprimoramentos e habilidades através dos Laboratórios da nave.
+- **Dados de Pesquisa**: Um recurso especial encontrado em anomalias ou locais raros, necessário para tecnologias avançadas.
 
 ### Mecânicas Secundárias
 
