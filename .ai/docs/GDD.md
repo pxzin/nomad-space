@@ -54,7 +54,14 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 
 ### Mecânicas Principais
 
-#### 1. Gerenciamento da Nave-Mãe (Base Móvel)
+#### 1. Controle Duplo de Naves
+
+- **Duas Entidades**: O jogador gerencia duas naves: a **Nave-Mãe** (lenta, pesada, foco em produção e pesquisa) e a **Nave de Exploração** (rápida, ágil, foco em coleta e descoberta).
+- **Troca de Foco**: O jogador pode alternar o controle e a visão da câmera entre as duas naves a qualquer momento (com uma tecla de atalho).
+- **Lançamento e Destruição**: A Nave de Exploração é lançada a partir de um módulo da Nave-Mãe. Se for destruída, uma nova precisa ser fabricada, consumindo recursos.
+- **Autonomia da Nave-Mãe**: Enquanto o jogador controla a Nave de Exploração, a Nave-Mãe pode ser instruída a manter um movimento lento e constante. Seus sistemas de defesa (escudos, torretas) funcionarão automaticamente se for atacada.
+
+#### 2. Gerenciamento da Nave-Mãe (Base Móvel)
 
 - **Sistema de Slots**: A nave possui um número limitado de slots onde o jogador pode instalar e aprimorar módulos. A gestão desses slots é um desafio estratégico.
 - **Categorias de Módulos**:
@@ -64,19 +71,20 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
     - **Defesa/Combate**: Escudos, Armas a laser, Sistemas de Reparo. Protegem contra perigos espaciais.
 - **Ciclo de Aprimoramento**: O ciclo principal é: **Aprimorar -> Pesquisar -> Explorar -> Coletar -> Repetir**.
 
-#### 2. Exploração Espacial
+#### 3. Exploração Espacial
 
 - **Mapa Estelar**: Navegação através de um mapa de sistemas estelares, com informações reveladas por scanners.
 - **Pontos de Interesse**: Planetas, asteroides, anomalias e naves abandonadas que podem ser investigados para obter recursos e dados.
 - **Eventos Dinâmicos**: Chuvas de meteoros, tempestades solares e outros eventos que afetam a navegação e exigem resposta do jogador.
+- **Limites do Cenário**: O mapa possui um limite final. Antes de atingi-lo, a nave entra em uma "área de buffer" que a desacelera progressivamente, desencorajando o jogador a colidir com a "parede invisível". **Justificativa Narrativa**: O espaço se torna mais denso nas extremidades do mapa, dificultando a navegação.
 
-#### 3. Gerenciamento de Recursos
+#### 4. Gerenciamento de Recursos
 
-- **Coleta**: Uso de drones ou expedições para coletar recursos de pontos de interesse.
+- **Coleta**: Uso de drones ou da Nave de Exploração para coletar recursos de pontos de interesse.
 - **Processamento**: Recursos brutos são processados em materiais úteis nas refinarias da Nave-Mãe.
 - **Recursos Essenciais**: Energia, Combustível, Integridade da Nave, e materiais de construção de módulos.
 
-#### 4. Sistema de Tecnologia
+#### 5. Sistema de Tecnologia
 
 - **Árvore de Pesquisa**: Desbloquear novos módulos, aprimoramentos e habilidades através dos Laboratórios da nave.
 - **Dados de Pesquisa**: Um recurso especial encontrado em anomalias ou locais raros, necessário para tecnologias avançadas.

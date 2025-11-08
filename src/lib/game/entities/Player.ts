@@ -20,6 +20,10 @@ export class Player {
 	private readonly MAX_VELOCITY = 400;
 	private readonly DRAG = 200;
 
+	// Configurações de limites do mundo
+	private readonly BUFFER_ZONE = 200; // Distância da borda onde começa a desaceleração
+	private worldBounds: Phaser.Geom.Rectangle | null = null;
+
 	constructor(scene: Scene, x: number, y: number) {
 		this.scene = scene;
 
@@ -33,11 +37,17 @@ export class Player {
 		body.setDrag(this.DRAG);
 		body.setMaxVelocity(this.MAX_VELOCITY);
 
+		// Configurar colisão com limites do mundo
+		body.setCollideWorldBounds(true);
+
 		// Posicionar sprite
 		this.sprite.setPosition(x, y);
 
 		// Configurar controles
 		this.setupControls();
+
+		// Armazenar limites do mundo para cálculos de buffer
+		this.worldBounds = this.scene.physics.world.bounds;
 	}
 
 	/**
@@ -80,6 +90,68 @@ export class Player {
 	}
 
 	/**
+	 * Calcula o fator de desaceleração baseado na distância até a borda mais próxima
+	 * @returns Fator entre 0 e 1, onde 0 = sem desaceleração, 1 = desaceleração máxima
+	 */
+	private calculateBoundarySlowdown(): number {
+		if (!this.worldBounds) return 0;
+
+		const { x, y } = this.sprite;
+		const bounds = this.worldBounds;
+
+		// Calcular distâncias até cada borda
+		const distanceToLeft = x - bounds.left;
+		const distanceToRight = bounds.right - x;
+		const distanceToTop = y - bounds.top;
+		const distanceToBottom = bounds.bottom - y;
+
+		// Encontrar a menor distância (mais próxima)
+		const minDistance = Math.min(
+			distanceToLeft,
+			distanceToRight,
+			distanceToTop,
+			distanceToBottom
+		);
+
+		// Se está fora da zona de buffer, sem desaceleração
+		if (minDistance > this.BUFFER_ZONE) {
+			return 0;
+		}
+
+		// Calcular fator de desaceleração (0 a 1)
+		// Quanto mais próximo da borda, maior o fator
+		const slowdownFactor = 1 - (minDistance / this.BUFFER_ZONE);
+
+		// Aplicar uma curva suave (ease-in) para tornar a desaceleração mais gradual
+		return Math.pow(slowdownFactor, 2);
+	}
+
+	/**
+	 * Verifica se a nave está na zona de buffer
+	 * @returns true se está na zona de buffer
+	 */
+	isInBufferZone(): boolean {
+		return this.calculateBoundarySlowdown() > 0;
+	}
+
+	/**
+	 * Retorna a distância até a borda mais próxima
+	 */
+	getDistanceToNearestBoundary(): number {
+		if (!this.worldBounds) return Infinity;
+
+		const { x, y } = this.sprite;
+		const bounds = this.worldBounds;
+
+		const distanceToLeft = x - bounds.left;
+		const distanceToRight = bounds.right - x;
+		const distanceToTop = y - bounds.top;
+		const distanceToBottom = bounds.bottom - y;
+
+		return Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
+	}
+
+	/**
 	 * Update loop - processa input e movimento
 	 */
 	update(): void {
@@ -116,6 +188,22 @@ export class Player {
 
 		body.setAcceleration(accelerationX, accelerationY);
 
+		// Aplicar desaceleração progressiva nas bordas
+		const slowdownFactor = this.calculateBoundarySlowdown();
+		if (slowdownFactor > 0) {
+			// Reduzir velocidade máxima com base na proximidade da borda
+			const reducedMaxVelocity = this.MAX_VELOCITY * (1 - slowdownFactor * 0.7);
+			body.setMaxVelocity(reducedMaxVelocity);
+
+			// Aplicar uma força contrária ao movimento para "frear" a nave
+			const dragMultiplier = 1 + slowdownFactor * 3; // Aumenta o arrasto conforme se aproxima
+			body.setDrag(this.DRAG * dragMultiplier);
+		} else {
+			// Resetar valores normais quando fora da zona de buffer
+			body.setMaxVelocity(this.MAX_VELOCITY);
+			body.setDrag(this.DRAG);
+		}
+
 		// Rotação suave baseada na direção do movimento
 		if (body.velocity.length() > 10) {
 			const targetAngle = Math.atan2(body.velocity.y, body.velocity.x) + Math.PI / 2;
@@ -145,6 +233,21 @@ export class Player {
 		return {
 			x: body.velocity.x,
 			y: body.velocity.y
+		};
+	}
+
+	/**
+	 * Retorna informações de debug sobre os limites
+	 */
+	getBoundaryDebugInfo(): {
+		isInBuffer: boolean;
+		distanceToBoundary: number;
+		slowdownFactor: number;
+	} {
+		return {
+			isInBuffer: this.isInBufferZone(),
+			distanceToBoundary: this.getDistanceToNearestBoundary(),
+			slowdownFactor: this.calculateBoundarySlowdown()
 		};
 	}
 
