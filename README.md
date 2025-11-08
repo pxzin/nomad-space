@@ -88,11 +88,11 @@ nomad-space/
 ### Pré-requisitos
 
 ```bash
-# Node.js (versão 16+ recomendada)
+# Node.js (versão 18+ recomendada)
 node --version
 
-# npm ou yarn
-npm --version
+# pnpm (gerenciador de pacotes)
+npm install -g pnpm
 ```
 
 ### Instalação
@@ -104,12 +104,22 @@ git clone https://github.com/pxzin/nomad-space.git
 # Entre no diretório
 cd nomad-space
 
-# Instale as dependências (quando disponível)
-npm install
+# Instale as dependências
+pnpm install
 
-# Execute o projeto (quando disponível)
-npm start
+# Execute o servidor de desenvolvimento
+pnpm dev
+
+# Build para produção
+pnpm build
+
+# Preview do build
+pnpm preview
 ```
+
+O servidor de desenvolvimento estará disponível em `http://localhost:5173/`
+
+Para mais informações sobre desenvolvimento, veja [DEV.md](DEV.md).
 
 ---
 
@@ -117,7 +127,13 @@ npm start
 
 ### Fase 1: Protótipo (2-3 semanas)
 - [x] Definir stack tecnológica final
-- [ ] Configurar ambiente de desenvolvimento (SvelteKit + Phaser + UnoCSS)
+- [x] Configurar ambiente de desenvolvimento (SvelteKit + Phaser + UnoCSS)
+  - [x] Projeto SvelteKit inicializado
+  - [x] Phaser 3.90.0 configurado
+  - [x] UnoCSS com paleta de cores do GDD
+  - [x] TypeScript configurado
+  - [x] Estrutura de diretórios criada
+  - [x] Servidor de desenvolvimento funcional
 - [ ] Sistema básico de movimento
 - [ ] Construção simples (3-4 estruturas)
 - [ ] Coleta de recursos básica
@@ -295,6 +311,16 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ---
 
 ## Changelog
+
+### v0.2.0 - 08/11/2025
+- Ambiente de desenvolvimento completamente configurado
+- Projeto SvelteKit inicializado com TypeScript
+- Phaser 3.90.0 integrado e funcionando
+- UnoCSS configurado com paleta de cores do GDD
+- Estrutura de diretórios criada
+- MainScene de teste implementada com starfield
+- Servidor de desenvolvimento funcional
+- Documentação de desenvolvimento criada (DEV.md)
 
 ### v0.1.1 - 08/11/2025
 - Stack tecnológica definida: Phaser + Svelte + SvelteKit + UnoCSS + TypeScript
