@@ -68,6 +68,7 @@
 #### 1.8 Controles Básicos, Câmera e Background (TAREFA 002 - ✅ CONCLUÍDA)
 **Origem**: `.ai/tasks/002-implement-basic-controls-and-camera.md`
 **Data de conclusão**: 08/11/2025
+**Status**: Testado e aprovado pelo usuário
 
 - [x] Criar classe Player (Nave-Mãe)
   - Arquivo: [src/lib/game/entities/Player.ts](src/lib/game/entities/Player.ts)
