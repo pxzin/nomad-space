@@ -70,3 +70,25 @@ Este documento contém os prompts para a geração dos assets visuais iniciais d
 - **Paleta de Cores**: Usar as mesmas cores dos asteroides correspondentes.
 - **Resolução Sugerida**: 16x16 pixels.
 - **Notas**: Devem ser claros e legíveis em tamanho pequeno.
+
+---
+
+### 7. Efeito de Comando "Mover Para"
+
+- **Nome do Asset**: `move_to_marker_effect.png`
+- **Descrição**: Um efeito visual de "ping" que aparece no local do clique direito. Deve ser uma animação curta.
+- **Animação**: Um círculo que expande rapidamente e desaparece.
+- **Paleta de Cores**: Ciano ou verde-limão para se destacar no fundo do espaço.
+- **Resolução Sugerida**: Spritesheet de 64x64 pixels (4-5 frames).
+- **Notas**: A animação deve ser rápida e não poluir a tela.
+
+---
+
+### 8. Ícone do Botão "Recolher"
+
+- **Nome do Asset**: `recall_button_icon.png`
+- **Descrição**: Um ícone para o botão que recolhe as naves de exploração.
+- **Design**: Uma seta apontando para um círculo ou um ícone de hangar. Deve ser intuitivo.
+- **Paleta de Cores**: Branco ou ciano sobre um fundo transparente.
+- **Resolução Sugerida**: 24x24 pixels.
+- **Notas**: Criar também uma versão "pressionada" ou "hover" do ícone, talvez com um brilho ou cor invertida.

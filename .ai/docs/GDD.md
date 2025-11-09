@@ -60,6 +60,8 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 - **Troca de Foco**: O jogador pode alternar o controle e a visão da câmera entre as duas naves a qualquer momento (com uma tecla de atalho).
 - **Lançamento e Destruição**: A Nave de Exploração é lançada a partir de um módulo da Nave-Mãe. Se for destruída, uma nova precisa ser fabricada, consumindo recursos.
 - **Autonomia da Nave-Mãe**: Enquanto o jogador controla a Nave de Exploração, a Nave-Mãe pode ser instruída a manter um movimento lento e constante. Seus sistemas de defesa (escudos, torretas) funcionarão automaticamente se for atacada.
+- **Comando Remoto**: Ao controlar a Nave de Exploração, o jogador pode usar o clique direito do mouse para definir um ponto de destino para a Nave-Mãe. Um efeito visual de "ping" marcará o local.
+- **Recolher Naves**: Ao controlar a Nave-Mãe, um botão na interface permite chamar a Nave de Exploração de volta. A ação deve ter um feedback visual no botão.
 
 #### 2. Gerenciamento da Nave-Mãe (Base Móvel)
 
