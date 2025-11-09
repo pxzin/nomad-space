@@ -38,15 +38,15 @@ Este documento contém os prompts para a geração dos assets visuais iniciais d
 
 ---
 
-### 4. Asteroides
+### 4. Asteroides de Recursos Brutos
 
-- **Nomes dos Assets**: `asteroid_iron.png`, `asteroid_silicon.png`, `asteroid_hydrogen.png`
+- **Nomes dos Assets**: `asteroid_iron_ore.png`, `asteroid_raw_silicon.png`, `asteroid_cosmic_ice.png`
 - **Descrição**:
-    - **Asteroide de Ferro**: Formato irregular de rocha espacial. Cor cinza-metálico com algumas áreas mais escuras.
-    - **Asteroide de Silício**: Formato mais cristalino e angular. Cor azul-acinzentado com pequenos pontos brilhantes (brancos ou ciano) na superfície.
-    - **Asteroide de Hidrogênio**: Um aglomerado de gelo espacial. Formato irregular, mas com uma superfície mais suave. Cor branca com um leve tom azulado, quase translúcido.
+    - **Minério de Ferro**: Formato irregular de rocha espacial. Cor cinza-metálico com veios visíveis de um metal mais escuro.
+    - **Silício Bruto**: Formato mais cristalino e angular. Cor azul-acinzentado com pequenos pontos brilhantes (brancos ou ciano) na superfície.
+    - **Gelo Cósmico**: Um aglomerado de gelo espacial. Formato irregular, mas com uma superfície mais suave. Cor branca com um leve tom azulado, quase translúcido.
 - **Resolução Sugerida**: Variações de tamanho entre 16x16 e 48x48 pixels.
-- **Notas**: Criar 2-3 variações de formato para cada tipo de asteroide para evitar repetição visual.
+- **Notas**: Substituem os asteroides genéricos anteriores.
 
 ---
 
@@ -60,60 +60,50 @@ Este documento contém os prompts para a geração dos assets visuais iniciais d
 
 ---
 
-### 6. Ícones do HUD
+### 6. Ícones de Recursos e Componentes (HUD e Menus)
 
-- **Nomes dos Assets**: `icon_iron.png`, `icon_silicon.png`, `icon_hydrogen.png`
-- **Descrição**: Representações simplificadas dos recursos correspondentes.
-    - **Ícone de Ferro**: Um pequeno lingote ou uma rocha metálica.
-    - **Ícone de Silício**: Um cristal ou um chip de computador.
-    - **Ícone de Hidrogênio**: Uma gota ou o símbolo atômico 'H'.
-- **Paleta de Cores**: Usar as mesmas cores dos asteroides correspondentes.
 - **Resolução Sugerida**: 16x16 pixels.
 - **Notas**: Devem ser claros e legíveis em tamanho pequeno.
+- **Recursos Brutos**:
+    - `icon_iron_ore.png`: Um ícone de uma rocha com veios de metal.
+    - `icon_raw_silicon.png`: Um ícone de um cristal bruto.
+    - `icon_cosmic_ice.png`: Um ícone de um bloco de gelo irregular.
+- **Materiais Refinados**:
+    - `icon_iron_plate.png`: Um ícone de uma placa de metal empilhada.
+    - `icon_silicon_wafer.png`: Um ícone de um disco circular (wafer) com linhas de circuito.
+    - `icon_purified_water.png`: Um ícone de uma gota de água limpa.
+- **Componentes**:
+    - `icon_mechanical_parts.png`: Um ícone de engrenagens e parafusos.
+    - `icon_electronic_components.png`: Um ícone de um chip de computador com pinos.
+    - `icon_fuel_cell.png`: Um ícone de uma bateria ou célula de energia cilíndrica.
+- **Recurso Especial**:
+    - `icon_research_data.png`: Um ícone de um tablet de dados ou um cérebro estilizado.
 
 ---
 
-### 7. Efeito de Comando "Mover Para"
+### 7. Efeitos e UI de Comandos
 
-- **Nome do Asset**: `move_to_marker_effect.png`
-- **Descrição**: Um efeito visual de "ping" que aparece no local do clique direito. Deve ser uma animação curta.
-- **Animação**: Um círculo que expande rapidamente e desaparece.
-- **Paleta de Cores**: Ciano ou verde-limão para se destacar no fundo do espaço.
-- **Resolução Sugerida**: Spritesheet de 64x64 pixels (4-5 frames).
-- **Notas**: A animação deve ser rápida e não poluir a tela.
+- **Efeito "Mover Para"**: `move_to_marker_effect.png` (Círculo que expande, ciano ou verde, 64x64).
+- **Ícone Botão "Recolher"**: `recall_button_icon.png` (Seta apontando para hangar, 24x24).
 
 ---
 
-### 8. Ícone do Botão "Recolher"
+### 8. Obstáculos
 
-- **Nome do Asset**: `recall_button_icon.png`
-- **Descrição**: Um ícone para o botão que recolhe as naves de exploração.
-- **Design**: Uma seta apontando para um círculo ou um ícone de hangar. Deve ser intuitivo.
-- **Paleta de Cores**: Branco ou ciano sobre um fundo transparente.
-- **Resolução Sugerida**: 24x24 pixels.
-- **Notas**: Criar também uma versão "pressionada" ou "hover" do ícone, talvez com um brilho ou cor invertida.
+- **Nomes**: `space_debris_01.png`, `barren_asteroid_01.png`
+- **Descrição**: Detritos de metal e rochas estéreis, marrons/cinzas.
+- **Resolução**: 24x24 a 80x80 pixels.
 
 ---
 
-### 9. Obstáculos
+### 9. Ícones de Módulos e UI de Construção
 
-- **Nomes dos Assets**: `space_debris_01.png`, `space_debris_02.png`, `barren_asteroid_01.png`
-- **Descrição**:
-    - **Detritos Espaciais**: Pedaços de metal retorcido, painéis solares quebrados, fragmentos de casco de naves antigas. Devem parecer inertes e danificados.
-    - **Asteroide Estéril**: Uma rocha espacial de formato genérico, com uma cor marrom ou cinza-escuro, sem os brilhos ou características dos asteroides de recursos.
-- **Paleta de Cores**: Cinzas, marrons, talvez com um pouco de ferrugem (laranja escuro).
-- **Resolução Sugerida**: Variações de tamanho entre 24x24 e 80x80 pixels.
-- **Notas**: Devem ser visualmente distintos dos asteroides coletáveis.
-
----
-
-### 10. Interface de Construção
-
-- **Nomes dos Assets**: `build_menu_button.png`, `module_refinery_icon.png`, `module_engine_icon.png`
-- **Descrição**:
-    - **Botão "Construir"**: Um ícone para o botão principal do HUD. Pode ser uma chave inglesa, uma engrenagem ou um martelo.
-    - **Ícone de Módulo (Refinaria)**: Um ícone para o menu de construção. Pode ser uma bigorna ou uma chaminé industrial.
-    - **Ícone de Módulo (Motor)**: Um ícone para o menu de construção. Pode ser uma hélice, uma turbina ou uma chama.
-- **Paleta de Cores**: Branco ou ciano, para combinar com os outros ícones do HUD.
-- **Resolução Sugerida**: 24x24 pixels para o botão do HUD, 32x32 para os ícones no menu.
-- **Notas**: Os ícones dos módulos devem ser claros sobre sua função.
+- **Resolução Sugerida**: 24x24 para botões de HUD, 32x32 para ícones de menu.
+- **Botão "Construir"**: `build_menu_button.png` (Chave inglesa ou martelo).
+- **Ícones de Módulos de Produção**:
+    - `module_refinery_icon.png`: Uma bigorna ou chaminé industrial.
+    - `module_factory_icon.png`: Um braço robótico ou uma esteira rolante.
+    - `module_assembler_icon.png`: Um diagrama de explosão de um objeto sendo montado.
+    - `module_laboratory_icon.png`: Um microscópio ou um béquer.
+- **Outros Ícones de Módulo**:
+    - `module_engine_icon.png`: Uma hélice ou turbina.

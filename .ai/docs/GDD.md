@@ -124,86 +124,51 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 
 ## 🏗️ Sistemas de Jogo
 
-### Sistema de Construção
+### 3. Sistema de Construção
 
-#### Tipos de Estruturas
+#### Tipos de Estruturas (Módulos da Nave-Mãe)
 
-1. **Habitação**
+1.  **Produção e Pesquisa**
+    -   **Laboratório**: Gera "Pontos de Pesquisa" ao consumir "Dados de Pesquisa" e energia. É a chave para a progressão.
+    -   **Refinaria**: Converte Recursos Brutos em Materiais Refinados (ex: Minério de Ferro -> Placas de Ferro).
+    -   **Fábrica**: Usa Materiais Refinados para criar Componentes complexos (ex: Placas de Ferro -> Peças Mecânicas).
+    -   **Montadora**: Usa Componentes para construir outros Módulos e Naves.
 
-   - Módulo de Comando (centro de controle)
-   - Dormitórios (aumento de eficiência)
-   - Cozinha/Refeitório (moral da tripulação - futuro)
+2.  **Infraestrutura e Suporte**
+    -   **Geradores de Energia**: Essenciais para alimentar todos os outros módulos.
+    -   **Sistemas de Suporte à Vida**: Necessários para a tripulação (mecânica futura).
+    -   **Hangares**: Permitem a construção e armazenamento de Naves de Exploração.
+    -   **Armazenamento**: Módulos que aumentam a capacidade máxima de recursos.
 
-2. **Produção**
+### 4. Gerenciamento de Recursos
 
-   - Refinaria (processar recursos)
-   - Fábrica (criar componentes)
-   - Laboratório (pesquisar tecnologias)
+A economia do jogo é baseada em uma cadeia de produção de 4 níveis.
 
-3. **Infraestrutura**
+1.  **Recursos Brutos**: Coletados no espaço.
+    -   *Exemplos*: Minério de Ferro, Silício Bruto, Gelo Cósmico.
 
-   - Geradores de Energia (solar, nuclear, geotérmica)
-   - Sistemas de Suporte à Vida (oxigênio, água)
-   - Hangares (armazenar veículos)
+2.  **Materiais Refinados**: Processados na **Refinaria**.
+    -   *Exemplos*: Placas de Ferro, Wafers de Silício, Água Purificada.
 
-4. **Armazenamento**
-   - Silos de Recursos
-   - Tanques de Combustível
-   - Bancos de Dados
+3.  **Componentes**: Fabricados na **Fábrica**.
+    -   *Exemplos*: Peças Mecânicas, Componentes Eletrônicos, Células de Combustível.
 
-### Sistema de Exploração
+4.  **Itens Finais**: Montados na **Montadora**.
+    -   *Exemplos*: Módulos da nave, Naves de Exploração, melhorias.
 
-#### Tipos de Locais
+- **Recurso Especial**:
+    - **Dados de Pesquisa**: Encontrado em anomalias, destroços ou locais raros. Não pode ser fabricado, apenas coletado. É o combustível para o **Laboratório**.
 
-1. **Planetas Rochosos**
+### 5. Sistema de Tecnologia
 
-   - Rico em metais
-   - Possibilidade de mineração subterrânea
-   - Gravidade variável
+A progressão é guiada por uma **Árvore Tecnológica**, acessada através de uma interface própria.
 
-2. **Planetas Gasosos (Luas)**
-
-   - Recursos energéticos
-   - Estações orbitais
-   - Perigos atmosféricos
-
-3. **Asteroides**
-
-   - Concentração alta de recursos raros
-   - Baixa gravidade
-   - Facilidade de mineração
-
-4. **Detritos Espaciais**
-   - Tecnologias alienígenas
-   - Componentes pré-fabricados
-   - Mistérios para desvendar
-
-### Sistema de Progressão
-
-#### Árvore de Tecnologia
-
-1. **Tier 1 - Sobrevivência Básica**
-
-   - Extratores de Recursos Básicos
-   - Geradores Solares
-   - Estruturas Simples
-
-2. **Tier 2 - Eficiência**
-
-   - Refinarias Avançadas
-   - Sistemas de Automação
-   - Veículos de Exploração
-
-3. **Tier 3 - Expansão**
-
-   - Tecnologias de Longo Alcance
-   - Sistemas de Teletransporte
-   - Mega Estruturas
-
-4. **Tier 4 - Transcendência**
-   - Tecnologias Alienígenas
-   - Manipulação Espacial
-   - Projetos Monumentais
+- **Pesquisa**: O **Laboratório** gera Pontos de Pesquisa ao longo do tempo, consumindo Dados de Pesquisa e Energia.
+- **Desbloqueios**: O jogador gasta Pontos de Pesquisa na árvore para desbloquear:
+    - **Novos Módulos**: Acesso para construir a Fábrica, Montadora, etc.
+    - **Novas Receitas**: Habilidade de fabricar componentes avançados ou usar materiais raros.
+    - **Melhorias Globais**: Bônus de eficiência, como +10% na velocidade de refino, -5% no consumo de combustível, etc.
+- **Dependências**: Certas tecnologias exigem outras como pré-requisito, criando um caminho de progressão.
 
 ---
 

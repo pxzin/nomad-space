@@ -6,6 +6,9 @@ import { Obstacle } from '../entities/Obstacle';
 import { ParallaxBackground } from '../systems/ParallaxBackground';
 import { DevMode } from '../utils/DevMode';
 import { ResourceManager } from '../managers/ResourceManager';
+import { SlotManager } from '../managers/SlotManager';
+import type { ModuleType } from '../types/ModuleTypes';
+import { MODULE_CATALOG } from '../types/ModuleTypes';
 
 type ActiveShip = 'mothership' | 'exploration';
 
@@ -42,10 +45,18 @@ export class MainScene extends Scene {
 	private moveToPing?: Phaser.GameObjects.Arc; // Efeito visual de ping do destino
 	private moveToPingTween?: Phaser.Tweens.Tween; // Animação do ping
 
+	// Sistema de construção de módulos
+	private slotManager: SlotManager;
+	private slotGraphics: Phaser.GameObjects.Graphics[] = []; // Visuais dos slots
+	private moduleGraphics: Map<number, Phaser.GameObjects.Graphics> = new Map(); // Visuais dos módulos instalados
+	private isPlacementMode: boolean = false; // Modo de posicionamento ativo
+	private selectedModuleType: ModuleType | null = null; // Módulo selecionado para instalar
+
 	constructor() {
 		super({ key: 'MainScene' });
 		this.devMode = DevMode.getInstance();
 		this.resourceManager = ResourceManager.getInstance();
+		this.slotManager = SlotManager.getInstance();
 	}
 
 	/**
@@ -113,10 +124,16 @@ export class MainScene extends Scene {
 		// Listener para o botão de recolher da HUDScene
 		this.hudScene.events.on('recall-exploration-ship', this.recallExplorationShip, this);
 
+		// Listener para seleção de módulo
+		this.events.on('module-selected', this.onModuleSelected, this);
+
 		// Aguardar HUDScene estar pronta e atualizar visibilidade do botão
 		this.time.delayedCall(200, () => {
 			(this.hudScene as any).updateRecallButtonVisibility(this.activeShip);
 		});
+
+		// Criar sistema de slots de módulos
+		this.createModuleSlotSystem();
 
 		// Prevenir menu de contexto do navegador no clique direito
 		this.input.mouse?.disableContextMenu();
@@ -346,6 +363,9 @@ export class MainScene extends Scene {
 			const mothershipPos = this.mothership.getPosition();
 			this.collectionSensor.setPosition(mothershipPos.x, mothershipPos.y);
 		}
+
+		// Atualizar posições dos módulos instalados (seguem a Nave-Mãe)
+		this.updateModulePositions();
 
 		// Verificar continuamente se asteroides em coleta ainda estão dentro do raio
 		this.checkAsteroidsInCollectionRange();
@@ -840,5 +860,291 @@ export class MainScene extends Scene {
 
 		// Destruir asteroide
 		asteroid.destroy();
+	}
+
+	/**
+	 * Cria o sistema visual de slots de módulos
+	 */
+	private createModuleSlotSystem(): void {
+		const slots = this.slotManager.getSlots();
+		const mothershipPos = this.mothership.getPosition();
+
+		slots.forEach((slot) => {
+			// Criar gráfico para o slot
+			const slotGraphic = this.add.graphics();
+			slotGraphic.setDepth(999); // Abaixo do HUD mas acima de tudo no jogo
+
+			// Desenhar slot vazio centrado em (0,0)
+			this.drawSlotEmpty(slotGraphic);
+
+			// Posicionar o gráfico na posição absoluta (Nave-Mãe + offset)
+			slotGraphic.setPosition(mothershipPos.x + slot.position.x, mothershipPos.y + slot.position.y);
+
+			// Inicialmente invisível (só aparece em modo de posicionamento)
+			slotGraphic.setVisible(false);
+
+			// Tornar slot interativo (área centrada em 0,0)
+			const hitArea = new Phaser.Geom.Circle(0, 0, 20);
+			slotGraphic.setInteractive(hitArea, Phaser.Geom.Circle.Contains);
+
+			// Eventos de interação
+			slotGraphic.on('pointerover', () => {
+				if (this.isPlacementMode && this.slotManager.isSlotEmpty(slot.id)) {
+					// Destacar slot ao passar mouse
+					slotGraphic.clear();
+					this.drawSlotHighlighted(slotGraphic);
+				}
+			});
+
+			slotGraphic.on('pointerout', () => {
+				if (this.isPlacementMode && this.slotManager.isSlotEmpty(slot.id)) {
+					// Voltar ao normal
+					slotGraphic.clear();
+					this.drawSlotEmpty(slotGraphic);
+				}
+			});
+
+			slotGraphic.on('pointerdown', () => {
+				if (this.isPlacementMode && this.selectedModuleType) {
+					this.installModule(slot.id, this.selectedModuleType);
+				}
+			});
+
+			this.slotGraphics.push(slotGraphic);
+		});
+
+		console.log('🔧 Sistema de slots visuais criado');
+	}
+
+	/**
+	 * Desenha um slot vazio (centrado em 0,0)
+	 */
+	private drawSlotEmpty(graphics: Phaser.GameObjects.Graphics): void {
+		graphics.lineStyle(2, 0x95a5a6, 0.6);
+		graphics.strokeCircle(0, 0, 20);
+
+		// Linhas tracejadas internas
+		graphics.lineStyle(1, 0x95a5a6, 0.4);
+		for (let i = 0; i < 8; i++) {
+			const angle = (i / 8) * Math.PI * 2;
+			const startRadius = 10;
+			const endRadius = 18;
+			graphics.lineBetween(
+				Math.cos(angle) * startRadius,
+				Math.sin(angle) * startRadius,
+				Math.cos(angle) * endRadius,
+				Math.sin(angle) * endRadius
+			);
+		}
+	}
+
+	/**
+	 * Desenha um slot destacado/hover (centrado em 0,0)
+	 */
+	private drawSlotHighlighted(graphics: Phaser.GameObjects.Graphics): void {
+		// Círculo com glow
+		graphics.fillStyle(0x2ecc71, 0.2);
+		graphics.fillCircle(0, 0, 22);
+
+		graphics.lineStyle(3, 0x2ecc71, 1);
+		graphics.strokeCircle(0, 0, 20);
+
+		// Cruz no centro
+		graphics.lineStyle(2, 0x2ecc71, 0.8);
+		graphics.lineBetween(-10, 0, 10, 0);
+		graphics.lineBetween(0, -10, 0, 10);
+	}
+
+	/**
+	 * Handler quando um módulo é selecionado
+	 */
+	private onModuleSelected(moduleType: ModuleType): void {
+		console.log('🔧 Entrando em modo de posicionamento:', moduleType);
+
+		// Entrar em modo de posicionamento
+		this.isPlacementMode = true;
+		this.selectedModuleType = moduleType;
+
+		// Mostrar slots vazios
+		this.updateSlotVisibility();
+	}
+
+	/**
+	 * Atualiza a visibilidade dos slots baseado no modo de posicionamento
+	 */
+	private updateSlotVisibility(): void {
+		const slots = this.slotManager.getSlots();
+
+		slots.forEach((slot, index) => {
+			const slotGraphic = this.slotGraphics[index];
+			if (!slotGraphic) return;
+
+			// Mostrar apenas slots vazios em modo de posicionamento
+			if (this.isPlacementMode && this.slotManager.isSlotEmpty(slot.id)) {
+				slotGraphic.setVisible(true);
+			} else {
+				slotGraphic.setVisible(false);
+			}
+		});
+	}
+
+	/**
+	 * Instala um módulo em um slot
+	 */
+	private installModule(slotId: number, moduleType: ModuleType): void {
+		// Verificar se tem recursos suficientes
+		const module = MODULE_CATALOG[moduleType];
+
+		if (!module) {
+			console.error('❌ Módulo não encontrado:', moduleType);
+			return;
+		}
+
+		const resources = this.resourceManager.getResources();
+		const canAfford =
+			resources.iron >= module.cost.iron &&
+			resources.silicon >= module.cost.silicon &&
+			resources.hydrogen >= module.cost.hydrogen;
+
+		if (!canAfford) {
+			console.error('❌ Recursos insuficientes para instalar', module.name);
+			return;
+		}
+
+		// Consumir recursos
+		this.resourceManager.consumeResources(
+			module.cost.iron,
+			module.cost.silicon,
+			module.cost.hydrogen
+		);
+
+		// Instalar módulo no slot
+		const success = this.slotManager.installModule(slotId, moduleType);
+
+		if (success) {
+			console.log('✅ Módulo', module.name, 'instalado no slot', slotId);
+
+			// Criar visual do módulo instalado
+			this.createModuleVisual(slotId, moduleType);
+
+			// Sair do modo de posicionamento
+			this.exitPlacementMode();
+		}
+	}
+
+	/**
+	 * Cria o visual de um módulo instalado
+	 */
+	private createModuleVisual(slotId: number, moduleType: ModuleType): void {
+		const slot = this.slotManager.getSlot(slotId);
+		if (!slot) return;
+
+		// Criar gráfico para o módulo
+		const moduleGraphic = this.add.graphics();
+		moduleGraphic.setDepth(998); // Abaixo dos slots, acima da nave
+
+		// Desenhar módulo centrado em (0,0) para facilitar posicionamento
+		switch (moduleType) {
+			case 'refinery':
+				// Refinaria - engrenagem
+				moduleGraphic.fillStyle(0xe67e22, 1);
+				moduleGraphic.fillCircle(0, 0, 15);
+				moduleGraphic.lineStyle(3, 0xd35400, 1);
+				moduleGraphic.strokeCircle(0, 0, 15);
+				break;
+
+			case 'engine':
+				// Motor - forma de propulsor
+				moduleGraphic.fillStyle(0x3498db, 1);
+				moduleGraphic.fillTriangle(0, -15, -12, 15, 12, 15);
+				moduleGraphic.lineStyle(2, 0x2980b9, 1);
+				moduleGraphic.strokeTriangle(0, -15, -12, 15, 12, 15);
+				break;
+
+			case 'storage':
+				// Armazenamento - caixa
+				moduleGraphic.fillStyle(0x9b59b6, 1);
+				moduleGraphic.fillRect(-12, -12, 24, 24);
+				moduleGraphic.lineStyle(2, 0x8e44ad, 1);
+				moduleGraphic.strokeRect(-12, -12, 24, 24);
+				break;
+
+			case 'shield':
+				// Escudo - hexágono
+				moduleGraphic.fillStyle(0x1abc9c, 1);
+				const points: { x: number; y: number }[] = [];
+				for (let i = 0; i < 6; i++) {
+					const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+					points.push({
+						x: Math.cos(angle) * 15,
+						y: Math.sin(angle) * 15
+					});
+				}
+				moduleGraphic.fillPoints(points, true);
+				moduleGraphic.lineStyle(2, 0x16a085, 1);
+				moduleGraphic.strokePoints(points, true);
+				break;
+		}
+
+		// Posicionar módulo na posição absoluta (Nave-Mãe + offset do slot)
+		const mothershipPos = this.mothership.getPosition();
+		moduleGraphic.setPosition(mothershipPos.x + slot.position.x, mothershipPos.y + slot.position.y);
+
+		// Armazenar referência
+		this.moduleGraphics.set(slotId, moduleGraphic);
+	}
+
+	/**
+	 * Sai do modo de posicionamento
+	 */
+	private exitPlacementMode(): void {
+		this.isPlacementMode = false;
+		this.selectedModuleType = null;
+
+		// Esconder todos os slots
+		this.slotGraphics.forEach((graphic) => {
+			graphic.setVisible(false);
+		});
+
+		console.log('🔧 Saiu do modo de posicionamento');
+	}
+
+	/**
+	 * Atualiza as posições e rotações dos slots e módulos instalados para seguirem a Nave-Mãe
+	 */
+	private updateModulePositions(): void {
+		const mothershipPos = this.mothership.getPosition();
+		const mothershipRotation = this.mothership.getRotation();
+		const slots = this.slotManager.getSlots();
+
+		slots.forEach((slot, index) => {
+			// Aplicar rotação ao offset do slot
+			// Quando a nave roda, os slots precisam girar ao redor do centro da nave
+			const cos = Math.cos(mothershipRotation);
+			const sin = Math.sin(mothershipRotation);
+
+			const rotatedX = slot.position.x * cos - slot.position.y * sin;
+			const rotatedY = slot.position.x * sin + slot.position.y * cos;
+
+			// Posição absoluta = posição da Nave-Mãe + offset rotacionado
+			const absoluteX = mothershipPos.x + rotatedX;
+			const absoluteY = mothershipPos.y + rotatedY;
+
+			// Atualizar posição e rotação do slot visual
+			const slotGraphic = this.slotGraphics[index];
+			if (slotGraphic) {
+				slotGraphic.setPosition(absoluteX, absoluteY);
+				slotGraphic.setRotation(mothershipRotation);
+			}
+
+			// Se o slot tem um módulo instalado, atualizar sua posição e rotação também
+			if (slot.installedModule) {
+				const moduleGraphic = this.moduleGraphics.get(slot.id);
+				if (moduleGraphic) {
+					moduleGraphic.setPosition(absoluteX, absoluteY);
+					moduleGraphic.setRotation(mothershipRotation);
+				}
+			}
+		});
 	}
 }

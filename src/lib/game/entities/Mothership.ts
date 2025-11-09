@@ -326,6 +326,13 @@ export class Mothership {
 	}
 
 	/**
+	 * Retorna a rotação atual da nave
+	 */
+	getRotation(): number {
+		return this.sprite.rotation;
+	}
+
+	/**
 	 * Retorna informações de debug sobre os limites
 	 */
 	getBoundaryDebugInfo(): {

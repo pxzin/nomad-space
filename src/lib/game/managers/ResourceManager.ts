@@ -86,6 +86,19 @@ export class ResourceManager {
 	}
 
 	/**
+	 * Adiciona múltiplos recursos de uma vez
+	 * Útil para Dev Mode e recompensas
+	 */
+	addResources(iron: number, silicon: number, hydrogen: number): void {
+		this.resources.iron += iron;
+		this.resources.silicon += silicon;
+		this.resources.hydrogen += hydrogen;
+
+		// Notificar listeners (HUD)
+		this.notifyListeners();
+	}
+
+	/**
 	 * Remove uma quantidade de recurso (para crafting futuro)
 	 */
 	removeResource(type: ResourceType, amount: number): boolean {
@@ -108,6 +121,19 @@ export class ResourceManager {
 
 		this.notifyListeners();
 		return true;
+	}
+
+	/**
+	 * Consome múltiplos recursos de uma vez
+	 * Usado para construção de módulos
+	 */
+	consumeResources(iron: number, silicon: number, hydrogen: number): void {
+		this.resources.iron -= iron;
+		this.resources.silicon -= silicon;
+		this.resources.hydrogen -= hydrogen;
+
+		// Notificar listeners (HUD)
+		this.notifyListeners();
 	}
 
 	/**
