@@ -92,3 +92,15 @@ Este documento contém os prompts para a geração dos assets visuais iniciais d
 - **Paleta de Cores**: Branco ou ciano sobre um fundo transparente.
 - **Resolução Sugerida**: 24x24 pixels.
 - **Notas**: Criar também uma versão "pressionada" ou "hover" do ícone, talvez com um brilho ou cor invertida.
+
+---
+
+### 9. Obstáculos
+
+- **Nomes dos Assets**: `space_debris_01.png`, `space_debris_02.png`, `barren_asteroid_01.png`
+- **Descrição**:
+    - **Detritos Espaciais**: Pedaços de metal retorcido, painéis solares quebrados, fragmentos de casco de naves antigas. Devem parecer inertes e danificados.
+    - **Asteroide Estéril**: Uma rocha espacial de formato genérico, com uma cor marrom ou cinza-escuro, sem os brilhos ou características dos asteroides de recursos.
+- **Paleta de Cores**: Cinzas, marrons, talvez com um pouco de ferrugem (laranja escuro).
+- **Resolução Sugerida**: Variações de tamanho entre 24x24 e 80x80 pixels.
+- **Notas**: Devem ser visualmente distintos dos asteroides coletáveis.

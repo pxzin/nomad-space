@@ -78,6 +78,9 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 - **Mapa Estelar**: Navegação através de um mapa de sistemas estelares, com informações reveladas por scanners.
 - **Pontos de Interesse**: Planetas, asteroides, anomalias e naves abandonadas que podem ser investigados para obter recursos e dados.
 - **Eventos Dinâmicos**: Chuvas de meteoros, tempestades solares e outros eventos que afetam a navegação e exigem resposta do jogador.
+- **Obstáculos**: O cenário contém objetos não-coletáveis que bloqueiam o movimento das naves (sem causar dano, inicialmente).
+    - **Detritos Espaciais**: Pedaços menores de metal e satélites antigos.
+    - **Asteroides Estéreis**: Rochas espaciais maiores e sem recursos.
 - **Limites do Cenário**: O mapa possui um limite final. Antes de atingi-lo, a nave entra em uma "área de buffer" que a desacelera progressivamente, desencorajando o jogador a colidir com a "parede invisível". **Justificativa Narrativa**: O espaço se torna mais denso nas extremidades do mapa, dificultando a navegação.
 
 #### 4. Gerenciamento de Recursos

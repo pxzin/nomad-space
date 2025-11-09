@@ -1,5 +1,6 @@
 import type { GameConfig } from 'phaser';
 import { MainScene } from './scenes';
+import { HUDScene } from './scenes/HUDScene';
 
 /**
  * Configuração principal do Phaser
@@ -22,5 +23,5 @@ export const gameConfig: GameConfig = {
 			debug: true // Ativar debug durante desenvolvimento
 		}
 	},
-	scene: [MainScene]
+	scene: [MainScene, HUDScene] // HUDScene roda em paralelo
 };

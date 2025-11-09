@@ -1,4 +1,5 @@
 import { Scene, GameObjects } from 'phaser';
+import { ResourceType } from '../managers/ResourceManager';
 
 /**
  * Classe que representa um asteroide de recursos
@@ -8,10 +9,23 @@ export class Asteroid {
 	private scene: Scene;
 	public sprite: GameObjects.Graphics;
 	private size: number;
+	public resourceType: ResourceType;
+	public resourceAmount: number;
 
-	constructor(scene: Scene, x: number, y: number, size: number = 20) {
+	constructor(scene: Scene, x: number, y: number, size: number = 20, resourceType?: ResourceType) {
 		this.scene = scene;
 		this.size = size;
+
+		// Definir tipo de recurso (aleatório se não especificado)
+		if (resourceType) {
+			this.resourceType = resourceType;
+		} else {
+			const types = [ResourceType.IRON, ResourceType.SILICON, ResourceType.HYDROGEN];
+			this.resourceType = types[Math.floor(Math.random() * types.length)];
+		}
+
+		// Quantidade baseada no tamanho do asteroide
+		this.resourceAmount = Math.floor(size / 2) + 5; // 12-20 recursos
 
 		// Criar sprite placeholder (formato de asteroide irregular)
 		this.sprite = this.scene.add.graphics();
@@ -33,12 +47,30 @@ export class Asteroid {
 	}
 
 	/**
-	 * Cria o gráfico do asteroide (forma irregular marrom)
+	 * Cria o gráfico do asteroide com cor baseada no tipo de recurso
 	 */
 	private createAsteroidGraphics(): void {
-		// Cor marrom/cinza para asteroides
-		this.sprite.fillStyle(0x8b7355, 1);
-		this.sprite.lineStyle(2, 0x654321, 1);
+		// Cores baseadas no tipo de recurso
+		let fillColor: number;
+		let strokeColor: number;
+
+		switch (this.resourceType) {
+			case ResourceType.IRON:
+				fillColor = 0x8b7355; // Marrom (ferro)
+				strokeColor = 0x654321;
+				break;
+			case ResourceType.SILICON:
+				fillColor = 0x7b68ee; // Roxo azulado (silício)
+				strokeColor = 0x483d8b;
+				break;
+			case ResourceType.HYDROGEN:
+				fillColor = 0x4682b4; // Azul claro (hidrogênio)
+				strokeColor = 0x1e3a5f;
+				break;
+		}
+
+		this.sprite.fillStyle(fillColor, 1);
+		this.sprite.lineStyle(2, strokeColor, 1);
 
 		// Desenhar forma irregular (aproximação de asteroide)
 		const points: { x: number; y: number }[] = [];
@@ -67,7 +99,7 @@ export class Asteroid {
 		this.sprite.strokePath();
 
 		// Adicionar detalhes (crateras)
-		this.sprite.fillStyle(0x654321, 0.6);
+		this.sprite.fillStyle(strokeColor, 0.6);
 		for (let i = 0; i < 3; i++) {
 			const craterX = (Math.random() - 0.5) * this.size * 0.5;
 			const craterY = (Math.random() - 0.5) * this.size * 0.5;

@@ -27,6 +27,11 @@ export class ExplorationShip {
 	// Estado de controle
 	private isActive: boolean = false;
 
+	// Sistema de movimento automático (para retorno à Nave-Mãe)
+	private targetPosition: { x: number; y: number } | null = null;
+	private readonly AUTO_MOVE_SPEED = 250; // Velocidade do movimento automático (mais rápida que a Nave-Mãe)
+	private readonly ARRIVAL_THRESHOLD = 20; // Distância para considerar que chegou ao destino
+
 	constructor(scene: Scene, x: number, y: number) {
 		this.scene = scene;
 
@@ -140,6 +145,27 @@ export class ExplorationShip {
 	}
 
 	/**
+	 * Define um ponto de destino para movimento automático
+	 */
+	setTargetPosition(x: number, y: number): void {
+		this.targetPosition = { x, y };
+	}
+
+	/**
+	 * Cancela o movimento automático
+	 */
+	cancelAutoMovement(): void {
+		this.targetPosition = null;
+	}
+
+	/**
+	 * Verifica se está em movimento automático
+	 */
+	isAutoMoving(): boolean {
+		return this.targetPosition !== null;
+	}
+
+	/**
 	 * Update loop - processa input e movimento
 	 */
 	update(): void {
@@ -150,8 +176,31 @@ export class ExplorationShip {
 		// Reset da aceleração
 		body.setAcceleration(0);
 
-		// Só processar input se esta nave estiver ativa
-		if (this.isActive) {
+		// Processar movimento automático (prioridade sobre controle manual)
+		if (this.targetPosition) {
+			const distance = Phaser.Math.Distance.Between(
+				this.sprite.x,
+				this.sprite.y,
+				this.targetPosition.x,
+				this.targetPosition.y
+			);
+
+			// Se chegou no destino, parar
+			if (distance < this.ARRIVAL_THRESHOLD) {
+				this.targetPosition = null;
+				body.setVelocity(0, 0);
+			} else {
+				// Mover em direção ao alvo usando physics.moveTo
+				this.scene.physics.moveTo(
+					this.sprite,
+					this.targetPosition.x,
+					this.targetPosition.y,
+					this.AUTO_MOVE_SPEED
+				);
+			}
+		}
+		// Só processar input manual se não estiver em movimento automático e se estiver ativa
+		else if (this.isActive) {
 			let accelerationX = 0;
 			let accelerationY = 0;
 

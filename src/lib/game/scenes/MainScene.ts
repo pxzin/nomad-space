@@ -4,6 +4,7 @@ import { ExplorationShip } from '../entities/ExplorationShip';
 import { Asteroid } from '../entities/Asteroid';
 import { ParallaxBackground } from '../systems/ParallaxBackground';
 import { DevMode } from '../utils/DevMode';
+import { ResourceManager } from '../managers/ResourceManager';
 
 type ActiveShip = 'mothership' | 'exploration';
 
@@ -18,8 +19,10 @@ export class MainScene extends Scene {
 	private background!: ParallaxBackground;
 	private debugText?: Phaser.GameObjects.Text;
 	private devMode: DevMode;
+	private resourceManager: ResourceManager;
 	private bufferZoneGraphics?: Phaser.GameObjects.Graphics;
 	private tabKey!: Phaser.Input.Keyboard.Key;
+	private hudScene!: Phaser.Scene;
 
 	// Sistema de recursos
 	private asteroids: Asteroid[] = [];
@@ -30,9 +33,13 @@ export class MainScene extends Scene {
 	private miningLaser?: Phaser.GameObjects.Line; // Linha do laser de mineração
 	private miningTimer?: Phaser.Time.TimerEvent; // Timer de mineração ativa
 
+	// Sistema de comandos remotos
+	private moveToPing?: Phaser.GameObjects.Arc; // Efeito visual de ping do destino
+
 	constructor() {
 		super({ key: 'MainScene' });
 		this.devMode = DevMode.getInstance();
+		this.resourceManager = ResourceManager.getInstance();
 	}
 
 	/**
@@ -87,6 +94,20 @@ export class MainScene extends Scene {
 
 		// Criar sistema de recursos
 		this.createResourceSystem();
+
+		// Iniciar HUDScene em paralelo
+		this.scene.launch('HUDScene');
+
+		// Obter referência à HUDScene
+		this.hudScene = this.scene.get('HUDScene');
+
+		// Listener para o botão de recolher da HUDScene
+		this.hudScene.events.on('recall-exploration-ship', this.recallExplorationShip, this);
+
+		// Aguardar HUDScene estar pronta e atualizar visibilidade do botão
+		this.time.delayedCall(200, () => {
+			(this.hudScene as any).updateRecallButtonVisibility(this.activeShip);
+		});
 
 		// Instruções
 		this.add
@@ -236,6 +257,22 @@ export class MainScene extends Scene {
 			this.mothership.setActive(true);
 			this.cameras.main.startFollow(this.mothership.sprite, true, 0.1, 0.1);
 		}
+
+		// Atualizar visibilidade do botão de recolher
+		(this.hudScene as any).updateRecallButtonVisibility(this.activeShip);
+	}
+
+	/**
+	 * Comando para recolher a Nave de Exploração de volta à Nave-Mãe
+	 */
+	private recallExplorationShip(): void {
+		// Obter posição da Nave-Mãe
+		const mothershipPos = this.mothership.getPosition();
+
+		// Definir Nave-Mãe como destino da Nave de Exploração
+		this.explorationShip.setTargetPosition(mothershipPos.x, mothershipPos.y);
+
+		console.log('🔙 Nave de Exploração retornando à Nave-Mãe');
 	}
 
 	/**
@@ -403,7 +440,10 @@ export class MainScene extends Scene {
 		const collectionTime = 2000;
 		const timer = this.time.delayedCall(collectionTime, () => {
 			// Coletar recurso
-			console.log('🚀 Nave-Mãe coletou recurso (passivo)');
+			this.resourceManager.addResource(asteroid.resourceType, asteroid.resourceAmount);
+			console.log(
+				`🚀 Nave-Mãe coletou ${asteroid.resourceAmount} de ${asteroid.resourceType} (passivo)`
+			);
 
 			// Remover asteroide
 			this.removeAsteroid(asteroid);
@@ -414,9 +454,25 @@ export class MainScene extends Scene {
 	}
 
 	/**
-	 * Handler de clique do mouse (mineração ativa)
+	 * Handler de clique do mouse (mineração ativa e movimento remoto)
 	 */
 	private onPointerDown(pointer: Phaser.Input.Pointer): void {
+		// CLIQUE DIREITO - Comandar Nave-Mãe (quando controlando Nave de Exploração)
+		if (pointer.rightButtonDown() && this.activeShip === 'exploration') {
+			const worldX = pointer.worldX;
+			const worldY = pointer.worldY;
+
+			// Definir destino da Nave-Mãe
+			this.mothership.setTargetPosition(worldX, worldY);
+
+			// Criar efeito de ping visual
+			this.createMoveToPing(worldX, worldY);
+
+			console.log(`🎯 Nave-Mãe comandada para ir até (${Math.round(worldX)}, ${Math.round(worldY)})`);
+			return;
+		}
+
+		// CLIQUE ESQUERDO - Mineração ativa (quando controlando Nave de Exploração)
 		// Verificar se a Nave de Exploração está ativa
 		if (this.activeShip !== 'exploration') return;
 
@@ -482,7 +538,11 @@ export class MainScene extends Scene {
 		// Timer de mineração (1 segundo)
 		const miningTime = 1000;
 		this.miningTimer = this.time.delayedCall(miningTime, () => {
-			console.log('🛸 Nave de Exploração minerou recurso (ativo)');
+			// Coletar recurso
+			this.resourceManager.addResource(asteroid.resourceType, asteroid.resourceAmount);
+			console.log(
+				`🛸 Nave de Exploração minerou ${asteroid.resourceAmount} de ${asteroid.resourceType} (ativo)`
+			);
 
 			// Remover laser
 			if (this.miningLaser) {
@@ -492,6 +552,35 @@ export class MainScene extends Scene {
 
 			// Remover asteroide
 			this.removeAsteroid(asteroid);
+		});
+	}
+
+	/**
+	 * Cria o efeito visual de "ping" no destino do movimento remoto
+	 */
+	private createMoveToPing(x: number, y: number): void {
+		// Remover ping anterior se existir
+		if (this.moveToPing) {
+			this.moveToPing.destroy();
+		}
+
+		// Criar círculo de ping
+		this.moveToPing = this.add.circle(x, y, 30, 0x2ecc71, 0);
+		this.moveToPing.setStrokeStyle(3, 0x2ecc71, 1);
+
+		// Animação de expansão e fade out
+		this.tweens.add({
+			targets: this.moveToPing,
+			radius: 60,
+			alpha: 0,
+			duration: 1000,
+			ease: 'Cubic.Out',
+			onComplete: () => {
+				if (this.moveToPing) {
+					this.moveToPing.destroy();
+					this.moveToPing = undefined;
+				}
+			}
 		});
 	}
 
