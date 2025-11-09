@@ -80,9 +80,14 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 
 #### 4. Gerenciamento de Recursos
 
-- **Coleta**: Uso de drones ou da Nave de Exploração para coletar recursos de pontos de interesse.
+- **Coleta**: A coleta de recursos é feita de duas maneiras distintas:
+    - **Coleta Ativa (Nave de Exploração)**: O jogador usa a Nave de Exploração para mirar e clicar em alvos (ex: asteroides). Um "laser de mineração" é ativado, coletando o recurso após um curto período. Este método é rápido e preciso.
+    - **Coleta Passiva (Nave-Mãe)**: A Nave-Mãe coleta automaticamente quaisquer recursos que entrem em seu raio de alcance. Módulos futuros podem aumentar esse raio e a eficiência da coleta (ex: múltiplos lasers passivos).
 - **Processamento**: Recursos brutos são processados em materiais úteis nas refinarias da Nave-Mãe.
-- **Recursos Essenciais**: Energia, Combustível, Integridade da Nave, e materiais de construção de módulos.
+- **Recursos Iniciais**:
+    - **Ferro**: Material de construção básico para estruturas e cascos.
+    - **Silício**: Usado em eletrônicos, computadores e módulos de pesquisa.
+    - **Hidrogênio**: Combustível para naves e sistemas de energia.
 
 #### 5. Sistema de Tecnologia
 
@@ -210,7 +215,7 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 
 ### Interface do Usuário
 
-- **HUD Minimalista**: Informações essenciais sem poluir a tela
+- **HUD Minimalista**: Informações essenciais sem poluir a tela. O canto superior direito será reservado para a contagem de recursos (ícone + quantidade).
 - **Menus Contextuais**: Aparecem quando necessário
 - **Iconografia Clara**: Símbolos intuitivos para ações e recursos
 - **Responsive**: Adaptável a diferentes resoluções

@@ -1,18 +1,24 @@
 import { Scene } from 'phaser';
-import { Player } from '../entities/Player';
+import { Mothership } from '../entities/Mothership';
+import { ExplorationShip } from '../entities/ExplorationShip';
 import { ParallaxBackground } from '../systems/ParallaxBackground';
 import { DevMode } from '../utils/DevMode';
+
+type ActiveShip = 'mothership' | 'exploration';
 
 /**
  * Cena principal do jogo
  * Responsável pelo gameplay core: exploração, construção e gerenciamento
  */
 export class MainScene extends Scene {
-	private player!: Player;
+	private mothership!: Mothership;
+	private explorationShip!: ExplorationShip;
+	private activeShip: ActiveShip = 'mothership';
 	private background!: ParallaxBackground;
 	private debugText?: Phaser.GameObjects.Text;
 	private devMode: DevMode;
 	private bufferZoneGraphics?: Phaser.GameObjects.Graphics;
+	private tabKey!: Phaser.Input.Keyboard.Key;
 
 	constructor() {
 		super({ key: 'MainScene' });
@@ -39,11 +45,20 @@ export class MainScene extends Scene {
 		// Criar background parallax
 		this.background = new ParallaxBackground(this);
 
-		// Criar jogador no centro do mundo
-		this.player = new Player(this, 0, 0);
+		// Criar Nave-Mãe no centro do mundo
+		this.mothership = new Mothership(this, 0, 0);
 
-		// Configurar câmera para seguir o jogador
-		this.cameras.main.startFollow(this.player.sprite, true, 0.1, 0.1);
+		// Criar Nave de Exploração próxima à Nave-Mãe
+		this.explorationShip = new ExplorationShip(this, 50, 50);
+		this.explorationShip.setActive(false); // Começa inativa
+
+		// Configurar tecla TAB para trocar de nave
+		if (this.input.keyboard) {
+			this.tabKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TAB);
+		}
+
+		// Configurar câmera para seguir a nave ativa
+		this.cameras.main.startFollow(this.mothership.sprite, true, 0.1, 0.1);
 		this.cameras.main.setBounds(-worldWidth / 2, -worldHeight / 2, worldWidth, worldHeight);
 		this.cameras.main.setZoom(1);
 
@@ -62,13 +77,18 @@ export class MainScene extends Scene {
 
 		// Instruções
 		this.add
-			.text(0, -400, 'Use WASD ou Setas para mover | A nave rotaciona na direção do movimento', {
-				fontFamily: 'Inter',
-				fontSize: '18px',
-				color: '#2ecc71',
-				backgroundColor: '#1a1a2e',
-				padding: { x: 10, y: 5 }
-			})
+			.text(
+				0,
+				-400,
+				'WASD/Setas: Mover | TAB: Trocar Nave | A nave rotaciona na direção do movimento',
+				{
+					fontFamily: 'Inter',
+					fontSize: '18px',
+					color: '#2ecc71',
+					backgroundColor: '#1a1a2e',
+					padding: { x: 10, y: 5 }
+				}
+			)
 			.setOrigin(0.5)
 			.setScrollFactor(0)
 			.setDepth(100);
@@ -187,11 +207,36 @@ export class MainScene extends Scene {
 	}
 
 	/**
+	 * Alterna entre Nave-Mãe e Nave de Exploração
+	 */
+	private switchShip(): void {
+		if (this.activeShip === 'mothership') {
+			// Trocar para nave de exploração
+			this.activeShip = 'exploration';
+			this.mothership.setActive(false);
+			this.explorationShip.setActive(true);
+			this.cameras.main.startFollow(this.explorationShip.sprite, true, 0.1, 0.1);
+		} else {
+			// Trocar para nave-mãe
+			this.activeShip = 'mothership';
+			this.explorationShip.setActive(false);
+			this.mothership.setActive(true);
+			this.cameras.main.startFollow(this.mothership.sprite, true, 0.1, 0.1);
+		}
+	}
+
+	/**
 	 * Update loop do jogo - executado a cada frame
 	 */
 	update(time: number, delta: number): void {
-		// Atualizar player
-		this.player.update();
+		// Verificar troca de nave (TAB)
+		if (Phaser.Input.Keyboard.JustDown(this.tabKey)) {
+			this.switchShip();
+		}
+
+		// Atualizar ambas as naves
+		this.mothership.update();
+		this.explorationShip.update();
 
 		// Atualizar background
 		this.background.update(delta);
@@ -206,12 +251,20 @@ export class MainScene extends Scene {
 	private updateDebugInfo(): void {
 		if (!this.debugText) return;
 
-		const pos = this.player.getPosition();
-		const vel = this.player.getVelocity();
+		// Obter dados da nave ativa
+		const activeShipObj =
+			this.activeShip === 'mothership' ? this.mothership : this.explorationShip;
+		const pos = activeShipObj.getPosition();
+		const vel = activeShipObj.getVelocity();
 		const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y);
-		const boundaryInfo = this.player.getBoundaryDebugInfo();
+		const boundaryInfo = activeShipObj.getBoundaryDebugInfo();
+
+		// Identificar nave ativa
+		const shipName = this.activeShip === 'mothership' ? '🚀 NAVE-MÃE' : '🛸 NAVE EXPLORAÇÃO';
+		const shipColor = this.activeShip === 'mothership' ? 'silver' : 'blue';
 
 		const debugLines = [
+			`${shipName} (TAB para trocar)`,
 			`Posição: (${Math.round(pos.x)}, ${Math.round(pos.y)})`,
 			`Velocidade: ${Math.round(speed)} px/s`,
 			`Vel X: ${Math.round(vel.x)} | Vel Y: ${Math.round(vel.y)}`,

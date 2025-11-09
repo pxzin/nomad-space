@@ -2,9 +2,9 @@ import { Scene, GameObjects } from 'phaser';
 
 /**
  * Classe que representa a Nave-Mãe do jogador
- * Responsável por movimento, física e controles
+ * Maior, mais pesada e lenta que a nave de exploração
  */
-export class Player {
+export class Mothership {
 	private scene: Scene;
 	public sprite: GameObjects.Graphics;
 	private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
@@ -15,14 +15,17 @@ export class Player {
 		D: Phaser.Input.Keyboard.Key | null;
 	};
 
-	// Configurações de movimento
-	private readonly ACCELERATION = 300;
-	private readonly MAX_VELOCITY = 400;
-	private readonly DRAG = 200;
+	// Configurações de movimento (mais pesada e lenta)
+	private readonly ACCELERATION = 200; // Menor aceleração
+	private readonly MAX_VELOCITY = 300; // Menor velocidade máxima
+	private readonly DRAG = 150; // Menor arrasto (mantém momento por mais tempo)
 
 	// Configurações de limites do mundo
 	private readonly BUFFER_ZONE = 200; // Distância da borda onde começa a desaceleração
 	private worldBounds: Phaser.Geom.Rectangle | null = null;
+
+	// Estado de controle
+	private isActive: boolean = true; // Começa ativa por padrão
 
 	constructor(scene: Scene, x: number, y: number) {
 		this.scene = scene;
@@ -51,24 +54,32 @@ export class Player {
 	}
 
 	/**
-	 * Cria o gráfico da nave (placeholder triangular)
+	 * Cria o gráfico da nave-mãe (retângulo grande)
 	 */
 	private createShipGraphics(): void {
-		this.sprite.fillStyle(0xffffff, 1);
+		// Cor cinza/prata para a nave-mãe
+		this.sprite.fillStyle(0xecf0f1, 1);
+		this.sprite.lineStyle(3, 0x2ecc71, 1);
+
+		// Desenhar retângulo grande com cantos arredondados
+		this.sprite.fillRoundedRect(-20, -30, 40, 60, 5);
+		this.sprite.strokeRoundedRect(-20, -30, 40, 60, 5);
+
+		// Adicionar detalhes - janelas
+		this.sprite.fillStyle(0x3498db, 0.8);
+		this.sprite.fillRect(-12, -20, 8, 8);
+		this.sprite.fillRect(4, -20, 8, 8);
+		this.sprite.fillRect(-12, -8, 8, 8);
+		this.sprite.fillRect(4, -8, 8, 8);
+
+		// Adicionar linha central
 		this.sprite.lineStyle(2, 0x2ecc71, 1);
+		this.sprite.lineBetween(0, -30, 0, 30);
 
-		// Desenhar triângulo apontando para cima
-		this.sprite.beginPath();
-		this.sprite.moveTo(0, -20);  // Ponta
-		this.sprite.lineTo(-15, 15); // Base esquerda
-		this.sprite.lineTo(15, 15);  // Base direita
-		this.sprite.closePath();
-		this.sprite.fillPath();
-		this.sprite.strokePath();
-
-		// Adicionar um ponto central
-		this.sprite.fillStyle(0x2ecc71, 1);
-		this.sprite.fillCircle(0, 0, 3);
+		// Adicionar propulsores na base
+		this.sprite.fillStyle(0xe74c3c, 0.8);
+		this.sprite.fillRect(-15, 25, 10, 4);
+		this.sprite.fillRect(5, 25, 10, 4);
 	}
 
 	/**
@@ -87,6 +98,20 @@ export class Player {
 
 		// Também criar cursor keys como alternativa (setas)
 		this.cursors = this.scene.input.keyboard.createCursorKeys();
+	}
+
+	/**
+	 * Ativa ou desativa o controle desta nave
+	 */
+	setActive(active: boolean): void {
+		this.isActive = active;
+
+		// Feedback visual quando ativa
+		if (active) {
+			this.sprite.setAlpha(1);
+		} else {
+			this.sprite.setAlpha(0.6); // Mais transparente quando inativa
+		}
 	}
 
 	/**
@@ -162,31 +187,34 @@ export class Player {
 		// Reset da aceleração
 		body.setAcceleration(0);
 
-		// Processar input e aplicar aceleração
-		let accelerationX = 0;
-		let accelerationY = 0;
+		// Só processar input se esta nave estiver ativa
+		if (this.isActive) {
+			// Processar input e aplicar aceleração
+			let accelerationX = 0;
+			let accelerationY = 0;
 
-		// WASD ou Arrow keys
-		if (this.keys.W?.isDown || this.cursors?.up.isDown) {
-			accelerationY = -this.ACCELERATION;
-		}
-		if (this.keys.S?.isDown || this.cursors?.down.isDown) {
-			accelerationY = this.ACCELERATION;
-		}
-		if (this.keys.A?.isDown || this.cursors?.left.isDown) {
-			accelerationX = -this.ACCELERATION;
-		}
-		if (this.keys.D?.isDown || this.cursors?.right.isDown) {
-			accelerationX = this.ACCELERATION;
-		}
+			// WASD ou Arrow keys
+			if (this.keys.W?.isDown || this.cursors?.up.isDown) {
+				accelerationY = -this.ACCELERATION;
+			}
+			if (this.keys.S?.isDown || this.cursors?.down.isDown) {
+				accelerationY = this.ACCELERATION;
+			}
+			if (this.keys.A?.isDown || this.cursors?.left.isDown) {
+				accelerationX = -this.ACCELERATION;
+			}
+			if (this.keys.D?.isDown || this.cursors?.right.isDown) {
+				accelerationX = this.ACCELERATION;
+			}
 
-		// Normalizar diagonal (para não mover mais rápido na diagonal)
-		if (accelerationX !== 0 && accelerationY !== 0) {
-			accelerationX *= 0.707; // 1/sqrt(2)
-			accelerationY *= 0.707;
-		}
+			// Normalizar diagonal (para não mover mais rápido na diagonal)
+			if (accelerationX !== 0 && accelerationY !== 0) {
+				accelerationX *= 0.707; // 1/sqrt(2)
+				accelerationY *= 0.707;
+			}
 
-		body.setAcceleration(accelerationX, accelerationY);
+			body.setAcceleration(accelerationX, accelerationY);
+		}
 
 		// Aplicar desaceleração progressiva nas bordas
 		const slowdownFactor = this.calculateBoundarySlowdown();
@@ -252,7 +280,14 @@ export class Player {
 	}
 
 	/**
-	 * Destrói o jogador e limpa recursos
+	 * Verifica se está ativa
+	 */
+	getIsActive(): boolean {
+		return this.isActive;
+	}
+
+	/**
+	 * Destrói a nave e limpa recursos
 	 */
 	destroy(): void {
 		this.sprite.destroy();
