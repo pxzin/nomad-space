@@ -104,3 +104,16 @@ Este documento contém os prompts para a geração dos assets visuais iniciais d
 - **Paleta de Cores**: Cinzas, marrons, talvez com um pouco de ferrugem (laranja escuro).
 - **Resolução Sugerida**: Variações de tamanho entre 24x24 e 80x80 pixels.
 - **Notas**: Devem ser visualmente distintos dos asteroides coletáveis.
+
+---
+
+### 10. Interface de Construção
+
+- **Nomes dos Assets**: `build_menu_button.png`, `module_refinery_icon.png`, `module_engine_icon.png`
+- **Descrição**:
+    - **Botão "Construir"**: Um ícone para o botão principal do HUD. Pode ser uma chave inglesa, uma engrenagem ou um martelo.
+    - **Ícone de Módulo (Refinaria)**: Um ícone para o menu de construção. Pode ser uma bigorna ou uma chaminé industrial.
+    - **Ícone de Módulo (Motor)**: Um ícone para o menu de construção. Pode ser uma hélice, uma turbina ou uma chama.
+- **Paleta de Cores**: Branco ou ciano, para combinar com os outros ícones do HUD.
+- **Resolução Sugerida**: 24x24 pixels para o botão do HUD, 32x32 para os ícones no menu.
+- **Notas**: Os ícones dos módulos devem ser claros sobre sua função.

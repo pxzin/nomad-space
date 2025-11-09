@@ -66,6 +66,7 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
 #### 2. Gerenciamento da Nave-Mãe (Base Móvel)
 
 - **Sistema de Slots**: A nave possui um número limitado de slots onde o jogador pode instalar e aprimorar módulos. A gestão desses slots é um desafio estratégico.
+- **Interface de Construção**: Um botão "Construir" no HUD abre um menu com os módulos disponíveis. O jogador seleciona um módulo no menu e clica em um slot vago na Nave-Mãe para instalá-lo.
 - **Categorias de Módulos**:
     - **Produção/Pesquisa**: Refinarias, Laboratórios, Fábricas, Armazenamento. Essenciais para a progressão tecnológica.
     - **Exploração/Movimento**: Motores de dobra, Scanners, Propulsores. Permitem alcançar novos locais.

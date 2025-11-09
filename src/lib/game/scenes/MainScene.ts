@@ -347,6 +347,9 @@ export class MainScene extends Scene {
 			this.collectionSensor.setPosition(mothershipPos.x, mothershipPos.y);
 		}
 
+		// Verificar continuamente se asteroides em coleta ainda estão dentro do raio
+		this.checkAsteroidsInCollectionRange();
+
 		// Atualizar laser de mineração (para seguir a nave durante mineração)
 		if (this.miningLaser && !this.miningTimer?.hasDispatched) {
 			const shipPos = this.explorationShip.getPosition();
@@ -574,6 +577,11 @@ export class MainScene extends Scene {
 		sensor: Phaser.GameObjects.GameObject,
 		asteroidSprite: Phaser.GameObjects.GameObject
 	): void {
+		// NÃO coletar se a Nave-Mãe estiver em movimento automático
+		if (this.mothership.isAutoMoving()) {
+			return;
+		}
+
 		// Encontrar o asteroide correspondente
 		const asteroid = this.asteroids.find((a) => a.sprite === asteroidSprite);
 		if (!asteroid) return;
@@ -615,6 +623,9 @@ export class MainScene extends Scene {
 
 			// Definir destino da Nave-Mãe
 			this.mothership.setTargetPosition(worldX, worldY);
+
+			// Cancelar todas as coletas passivas em andamento
+			this.cancelAllPassiveCollections();
 
 			// Criar efeito de ping visual
 			this.createMoveToPing(worldX, worldY);
@@ -740,6 +751,64 @@ export class MainScene extends Scene {
 				this.moveToPingTween = undefined;
 			}
 		});
+	}
+
+	/**
+	 * Verifica se asteroides em coleta ainda estão dentro do raio de coleta
+	 * Cancela coletas de asteroides que saíram do raio
+	 */
+	private checkAsteroidsInCollectionRange(): void {
+		const collectionRadius = 150;
+		const mothershipPos = this.mothership.getPosition();
+
+		// Verificar cada asteroide em processo de coleta
+		for (const [asteroid, timer] of this.collectingAsteroids) {
+			const asteroidPos = asteroid.getPosition();
+			const distance = Phaser.Math.Distance.Between(
+				mothershipPos.x,
+				mothershipPos.y,
+				asteroidPos.x,
+				asteroidPos.y
+			);
+
+			// Se saiu do raio de coleta, cancelar
+			if (distance > collectionRadius) {
+				// Cancelar timer
+				timer.remove();
+				this.collectingAsteroids.delete(asteroid);
+
+				// Remover círculo visual
+				const circle = this.collectionCircles.get(asteroid);
+				if (circle) {
+					circle.destroy();
+					this.collectionCircles.delete(asteroid);
+				}
+
+				console.log(`❌ Coleta cancelada - asteroide saiu do raio (distância: ${Math.round(distance)}px)`);
+			}
+		}
+	}
+
+	/**
+	 * Cancela todas as coletas passivas em andamento
+	 */
+	private cancelAllPassiveCollections(): void {
+		// Cancelar todos os timers de coleta
+		for (const [asteroid, timer] of this.collectingAsteroids) {
+			timer.remove();
+
+			// Remover círculo visual de coleta
+			const circle = this.collectionCircles.get(asteroid);
+			if (circle) {
+				circle.destroy();
+				this.collectionCircles.delete(asteroid);
+			}
+		}
+
+		// Limpar mapa de coletas
+		this.collectingAsteroids.clear();
+
+		console.log('⏸️ Coletas passivas canceladas (Nave-Mãe em movimento)');
 	}
 
 	/**
