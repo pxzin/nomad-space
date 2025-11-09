@@ -8,6 +8,7 @@ import { DevMode } from '../utils/DevMode';
 import { ResourceManager } from '../managers/ResourceManager';
 import { SlotManager } from '../managers/SlotManager';
 import { RefineryManager } from '../managers/RefineryManager';
+import { FactoryManager } from '../managers/FactoryManager';
 import type { ModuleType } from '../types/ModuleTypes';
 import { MODULE_CATALOG } from '../types/ModuleTypes';
 
@@ -26,6 +27,7 @@ export class MainScene extends Scene {
 	private devMode: DevMode;
 	private resourceManager: ResourceManager;
 	private refineryManager: RefineryManager;
+	private factoryManager: FactoryManager;
 	private bufferZoneGraphics?: Phaser.GameObjects.Graphics;
 	private tabKey!: Phaser.Input.Keyboard.Key;
 	private hudScene!: Phaser.Scene;
@@ -60,8 +62,10 @@ export class MainScene extends Scene {
 		this.resourceManager = ResourceManager.getInstance();
 		this.slotManager = SlotManager.getInstance();
 		this.refineryManager = RefineryManager.getInstance();
-		// Conectar RefineryManager ao SlotManager
+		this.factoryManager = FactoryManager.getInstance();
+		// Conectar managers ao SlotManager
 		this.refineryManager.setSlotManager(this.slotManager);
+		this.factoryManager.setSlotManager(this.slotManager);
 	}
 
 	/**
@@ -322,8 +326,9 @@ export class MainScene extends Scene {
 		this.mothership.update();
 		this.explorationShip.update();
 
-		// Atualizar sistema de refinarias
+		// Atualizar sistemas de produção
 		this.refineryManager.update(time);
+		this.factoryManager.update(time);
 
 		// Atualizar destino da Nave de Exploração se estiver retornando (seguir Nave-Mãe em movimento)
 		if (
@@ -1065,6 +1070,18 @@ export class MainScene extends Scene {
 				moduleGraphic.fillCircle(0, 0, 15);
 				moduleGraphic.lineStyle(3, 0xd35400, 1);
 				moduleGraphic.strokeCircle(0, 0, 15);
+				break;
+
+			case 'factory':
+				// Fábrica - retângulo com chaminé
+				moduleGraphic.fillStyle(0x9b59b6, 1);
+				moduleGraphic.fillRect(-14, -8, 28, 16);
+				moduleGraphic.lineStyle(2, 0x8e44ad, 1);
+				moduleGraphic.strokeRect(-14, -8, 28, 16);
+				// Chaminé
+				moduleGraphic.fillStyle(0x7d3c98, 1);
+				moduleGraphic.fillRect(-4, -14, 8, 8);
+				moduleGraphic.strokeRect(-4, -14, 8, 8);
 				break;
 
 			case 'engine':

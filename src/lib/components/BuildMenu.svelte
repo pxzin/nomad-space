@@ -64,6 +64,8 @@
 							<div class="module-icon">
 								{#if module.type === ModuleType.REFINERY}
 									⚙️
+								{:else if module.type === ModuleType.FACTORY}
+									🏭
 								{:else if module.type === ModuleType.ENGINE}
 									🚀
 								{:else if module.type === ModuleType.STORAGE}

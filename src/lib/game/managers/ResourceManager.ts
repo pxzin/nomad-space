@@ -9,7 +9,11 @@ export enum ResourceType {
 	// Materiais Refinados (processados pela Refinaria)
 	IRON_PLATE = 'iron_plate',
 	SILICON_WAFER = 'silicon_wafer',
-	PURIFIED_WATER = 'purified_water'
+	PURIFIED_WATER = 'purified_water',
+	// Componentes (processados pela Fábrica)
+	MECHANICAL_PARTS = 'mechanical_parts',
+	ELECTRONIC_COMPONENTS = 'electronic_components',
+	FUEL_CELL = 'fuel_cell'
 }
 
 /**
@@ -24,6 +28,10 @@ export interface Resources {
 	iron_plate: number;
 	silicon_wafer: number;
 	purified_water: number;
+	// Componentes
+	mechanical_parts: number;
+	electronic_components: number;
+	fuel_cell: number;
 }
 
 /**
@@ -45,7 +53,11 @@ export class ResourceManager {
 			// Materiais Refinados
 			iron_plate: 0,
 			silicon_wafer: 0,
-			purified_water: 0
+			purified_water: 0,
+			// Componentes
+			mechanical_parts: 0,
+			electronic_components: 0,
+			fuel_cell: 0
 		};
 	}
 
@@ -85,6 +97,13 @@ export class ResourceManager {
 				return this.resources.silicon_wafer;
 			case ResourceType.PURIFIED_WATER:
 				return this.resources.purified_water;
+			// Componentes
+			case ResourceType.MECHANICAL_PARTS:
+				return this.resources.mechanical_parts;
+			case ResourceType.ELECTRONIC_COMPONENTS:
+				return this.resources.electronic_components;
+			case ResourceType.FUEL_CELL:
+				return this.resources.fuel_cell;
 		}
 	}
 
@@ -112,6 +131,16 @@ export class ResourceManager {
 				break;
 			case ResourceType.PURIFIED_WATER:
 				this.resources.purified_water += amount;
+				break;
+			// Componentes
+			case ResourceType.MECHANICAL_PARTS:
+				this.resources.mechanical_parts += amount;
+				break;
+			case ResourceType.ELECTRONIC_COMPONENTS:
+				this.resources.electronic_components += amount;
+				break;
+			case ResourceType.FUEL_CELL:
+				this.resources.fuel_cell += amount;
 				break;
 		}
 
@@ -173,6 +202,16 @@ export class ResourceManager {
 				break;
 			case ResourceType.PURIFIED_WATER:
 				this.resources.purified_water -= amount;
+				break;
+			// Componentes
+			case ResourceType.MECHANICAL_PARTS:
+				this.resources.mechanical_parts -= amount;
+				break;
+			case ResourceType.ELECTRONIC_COMPONENTS:
+				this.resources.electronic_components -= amount;
+				break;
+			case ResourceType.FUEL_CELL:
+				this.resources.fuel_cell -= amount;
 				break;
 		}
 
@@ -241,7 +280,11 @@ export class ResourceManager {
 			// Materiais Refinados
 			iron_plate: 0,
 			silicon_wafer: 0,
-			purified_water: 0
+			purified_water: 0,
+			// Componentes
+			mechanical_parts: 0,
+			electronic_components: 0,
+			fuel_cell: 0
 		};
 		this.notifyListeners();
 	}

@@ -3,6 +3,7 @@
  */
 export enum ModuleType {
 	REFINERY = 'refinery',
+	FACTORY = 'factory',
 	ENGINE = 'engine',
 	STORAGE = 'storage',
 	SHIELD = 'shield'
@@ -53,6 +54,21 @@ export const MODULE_CATALOG: Record<ModuleType, Module> = {
 			cosmic_ice: 0,
 			iron_plate: 0,
 			silicon_wafer: 0,
+			purified_water: 0
+		}
+	},
+	[ModuleType.FACTORY]: {
+		type: ModuleType.FACTORY,
+		name: 'Fábrica',
+		description: 'Produz componentes a partir de materiais refinados',
+		icon: 'module_factory',
+		cost: {
+			// Fábrica custa materiais refinados
+			iron_ore: 0,
+			raw_silicon: 0,
+			cosmic_ice: 0,
+			iron_plate: 25,
+			silicon_wafer: 10,
 			purified_water: 0
 		}
 	},

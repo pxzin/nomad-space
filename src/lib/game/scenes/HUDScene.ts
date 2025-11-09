@@ -15,6 +15,10 @@ export class HUDScene extends Scene {
 	private ironPlateText!: Phaser.GameObjects.Text;
 	private siliconWaferText!: Phaser.GameObjects.Text;
 	private purifiedWaterText!: Phaser.GameObjects.Text;
+	// Textos de componentes
+	private mechanicalPartsText!: Phaser.GameObjects.Text;
+	private electronicComponentsText!: Phaser.GameObjects.Text;
+	private fuelCellText!: Phaser.GameObjects.Text;
 	private recallButton!: Phaser.GameObjects.Container;
 	private recallButtonBg!: Phaser.GameObjects.Rectangle;
 	private recallButtonText!: Phaser.GameObjects.Text;
@@ -102,6 +106,34 @@ export class HUDScene extends Scene {
 		// Água Purificada
 		this.purifiedWaterText = this.add
 			.text(startX, currentY, '⚗️ Água Purificada: 0', textStyle)
+			.setOrigin(1, 0);
+		currentY += lineHeight + 15;
+
+		// === COMPONENTES ===
+		this.add
+			.text(startX, currentY, '🏭 COMPONENTES', {
+				...textStyle,
+				fontSize: '17px',
+				color: '#9b59b6'
+			})
+			.setOrigin(1, 0);
+		currentY += lineHeight;
+
+		// Peças Mecânicas
+		this.mechanicalPartsText = this.add
+			.text(startX, currentY, '⚙️ Peças Mecânicas: 0', textStyle)
+			.setOrigin(1, 0);
+		currentY += lineHeight;
+
+		// Componentes Eletrônicos
+		this.electronicComponentsText = this.add
+			.text(startX, currentY, '🔌 Componentes Eletrônicos: 0', textStyle)
+			.setOrigin(1, 0);
+		currentY += lineHeight;
+
+		// Célula de Combustível
+		this.fuelCellText = this.add
+			.text(startX, currentY, '🔋 Célula de Combustível: 0', textStyle)
 			.setOrigin(1, 0);
 
 		// Listener para mudanças nos recursos
@@ -286,6 +318,10 @@ export class HUDScene extends Scene {
 		this.ironPlateText.setText(`🔩 Placa de Ferro: ${resources.iron_plate}`);
 		this.siliconWaferText.setText(`💎 Bolacha de Silício: ${resources.silicon_wafer}`);
 		this.purifiedWaterText.setText(`⚗️ Água Purificada: ${resources.purified_water}`);
+		// Componentes
+		this.mechanicalPartsText.setText(`⚙️ Peças Mecânicas: ${resources.mechanical_parts}`);
+		this.electronicComponentsText.setText(`🔌 Componentes Eletrônicos: ${resources.electronic_components}`);
+		this.fuelCellText.setText(`🔋 Célula de Combustível: ${resources.fuel_cell}`);
 	}
 
 	/**
@@ -293,7 +329,7 @@ export class HUDScene extends Scene {
 	 */
 	private createDevModePanel(): void {
 		const panelWidth = 320;
-		const panelHeight = 620;
+		const panelHeight = 780;
 		const panelX = this.cameras.main.width / 2;
 		const panelY = this.cameras.main.height / 2;
 
@@ -422,12 +458,58 @@ export class HUDScene extends Scene {
 			0.5
 		);
 
+		// === COMPONENTES ===
+		const componentsTitle = this.add.text(0, buttonStartY + 30 + buttonSpacing * 6 + 50, '🏭 Componentes', {
+			fontFamily: 'Fira Code',
+			fontSize: '14px',
+			color: '#9b59b6',
+			fontStyle: 'bold'
+		});
+		componentsTitle.setOrigin(0.5);
+
+		// Botão +10 Peças Mecânicas
+		const mechanicalPartsBtn = this.createResourceButton(
+			0,
+			buttonStartY + 30 + buttonSpacing * 6 + 80,
+			'⚙️ +10 Peças Mecânicas',
+			() => this.resourceManager.addResources(0, 0, 0, 0, 0, 0, 10),
+			0x9b59b6
+		);
+
+		// Botão +10 Componentes Eletrônicos
+		const electronicComponentsBtn = this.createResourceButton(
+			0,
+			buttonStartY + 30 + buttonSpacing * 7 + 80,
+			'🔌 +10 Comp. Eletrônicos',
+			() => this.resourceManager.addResources(0, 0, 0, 0, 0, 0, 0, 10),
+			0x9b59b6
+		);
+
+		// Botão +10 Células de Combustível
+		const fuelCellBtn = this.createResourceButton(
+			0,
+			buttonStartY + 30 + buttonSpacing * 8 + 80,
+			'🔋 +10 Célula Combustível',
+			() => this.resourceManager.addResources(0, 0, 0, 0, 0, 0, 0, 0, 10),
+			0x9b59b6
+		);
+
+		// Separador 4
+		const separator4 = this.add.rectangle(
+			0,
+			buttonStartY + 30 + buttonSpacing * 9 + 75,
+			panelWidth - 40,
+			2,
+			0xe74c3c,
+			0.5
+		);
+
 		// Botão +100 TODOS
 		const allBtn = this.createResourceButton(
 			0,
-			buttonStartY + 30 + buttonSpacing * 6 + 50,
+			buttonStartY + 30 + buttonSpacing * 9 + 90,
 			'💰 +100 TODOS',
-			() => this.resourceManager.addResources(100, 100, 100, 100, 100, 100),
+			() => this.resourceManager.addResources(100, 100, 100, 100, 100, 100, 100, 100, 100),
 			0x2ecc71
 		);
 
@@ -447,6 +529,11 @@ export class HUDScene extends Scene {
 			siliconWaferBtn.container,
 			purifiedWaterBtn.container,
 			separator3,
+			componentsTitle,
+			mechanicalPartsBtn.container,
+			electronicComponentsBtn.container,
+			fuelCellBtn.container,
+			separator4,
 			allBtn.container
 		]);
 
