@@ -117,6 +117,9 @@ export class MainScene extends Scene {
 			(this.hudScene as any).updateRecallButtonVisibility(this.activeShip);
 		});
 
+		// Prevenir menu de contexto do navegador no clique direito
+		this.input.mouse?.disableContextMenu();
+
 		// Instruções
 		this.add
 			.text(
