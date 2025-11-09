@@ -40,6 +40,7 @@ export class MainScene extends Scene {
 
 	// Sistema de comandos remotos
 	private moveToPing?: Phaser.GameObjects.Arc; // Efeito visual de ping do destino
+	private moveToPingTween?: Phaser.Tweens.Tween; // Animação do ping
 
 	constructor() {
 		super({ key: 'MainScene' });
@@ -507,12 +508,16 @@ export class MainScene extends Scene {
 
 		// Criar imagem invisível como sensor (círculo)
 		this.collectionSensor = this.physics.add.image(0, 0, '');
-		this.collectionSensor.setCircle(collectionRadius);
 		this.collectionSensor.setVisible(false);
+
+		// IMPORTANTE: Definir origin (0, 0) para alinhar com o sistema de Graphics da Nave-Mãe
+		// Graphics sempre tem pivot em (0,0), então o Image sensor também deve ter
+		this.collectionSensor.setOrigin(0, 0);
 
 		// Criar corpo físico circular
 		const body = this.collectionSensor.body as Phaser.Physics.Arcade.Body;
-		body.setCircle(collectionRadius);
+		// Com origin (0,0), o círculo precisa de offset para centralizar no sprite
+		body.setCircle(collectionRadius, -collectionRadius, -collectionRadius);
 
 		// Configurar overlap com asteroides
 		this.physics.add.overlap(
@@ -669,7 +674,13 @@ export class MainScene extends Scene {
 	private createMoveToPing(x: number, y: number): void {
 		// Remover ping anterior se existir
 		if (this.moveToPing) {
+			// IMPORTANTE: Parar animação antes de destruir o objeto
+			if (this.moveToPingTween) {
+				this.moveToPingTween.stop();
+				this.moveToPingTween = undefined;
+			}
 			this.moveToPing.destroy();
+			this.moveToPing = undefined;
 		}
 
 		// Criar círculo de ping
@@ -677,7 +688,7 @@ export class MainScene extends Scene {
 		this.moveToPing.setStrokeStyle(3, 0x2ecc71, 1);
 
 		// Animação de expansão e fade out
-		this.tweens.add({
+		this.moveToPingTween = this.tweens.add({
 			targets: this.moveToPing,
 			radius: 60,
 			alpha: 0,
@@ -688,6 +699,7 @@ export class MainScene extends Scene {
 					this.moveToPing.destroy();
 					this.moveToPing = undefined;
 				}
+				this.moveToPingTween = undefined;
 			}
 		});
 	}

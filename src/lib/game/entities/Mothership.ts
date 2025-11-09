@@ -42,6 +42,12 @@ export class Mothership {
 		// Adicionar física ao sprite
 		this.scene.physics.add.existing(this.sprite);
 		const body = this.sprite.body as Phaser.Physics.Arcade.Body;
+
+		// Usar corpo circular para que não precise rotacionar
+		// Raio baseado na largura da nave (30px de raio ~= 60x60 círculo envolvendo a nave)
+		const collisionRadius = 30;
+		body.setCircle(collisionRadius, -collisionRadius, -collisionRadius);
+
 		body.setDrag(this.DRAG);
 		body.setMaxVelocity(this.MAX_VELOCITY);
 

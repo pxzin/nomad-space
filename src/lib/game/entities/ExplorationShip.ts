@@ -42,6 +42,12 @@ export class ExplorationShip {
 		// Adicionar física ao sprite
 		this.scene.physics.add.existing(this.sprite);
 		const body = this.sprite.body as Phaser.Physics.Arcade.Body;
+
+		// Usar corpo circular para que não precise rotacionar
+		// Raio baseado no tamanho da nave (12px de raio ~= 24x24 círculo envolvendo o losango)
+		const collisionRadius = 12;
+		body.setCircle(collisionRadius, -collisionRadius, -collisionRadius);
+
 		body.setDrag(this.DRAG);
 		body.setMaxVelocity(this.MAX_VELOCITY);
 
