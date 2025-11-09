@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { Mothership } from '../entities/Mothership';
 import { ExplorationShip } from '../entities/ExplorationShip';
 import { Asteroid } from '../entities/Asteroid';
+import { Obstacle } from '../entities/Obstacle';
 import { ParallaxBackground } from '../systems/ParallaxBackground';
 import { DevMode } from '../utils/DevMode';
 import { ResourceManager } from '../managers/ResourceManager';
@@ -32,6 +33,10 @@ export class MainScene extends Scene {
 	private collectionCircles: Map<Asteroid, Phaser.GameObjects.Arc> = new Map(); // Círculos visuais de coleta
 	private miningLaser?: Phaser.GameObjects.Line; // Linha do laser de mineração
 	private miningTimer?: Phaser.Time.TimerEvent; // Timer de mineração ativa
+
+	// Sistema de obstáculos
+	private obstacles: Obstacle[] = [];
+	private obstacleGroup!: Phaser.Physics.Arcade.StaticGroup;
 
 	// Sistema de comandos remotos
 	private moveToPing?: Phaser.GameObjects.Arc; // Efeito visual de ping do destino
@@ -94,6 +99,9 @@ export class MainScene extends Scene {
 
 		// Criar sistema de recursos
 		this.createResourceSystem();
+
+		// Criar sistema de obstáculos
+		this.createObstacleSystem();
 
 		// Iniciar HUDScene em paralelo
 		this.scene.launch('HUDScene');
@@ -389,6 +397,103 @@ export class MainScene extends Scene {
 
 		// Adicionar listener de clique para mineração ativa
 		this.input.on('pointerdown', this.onPointerDown, this);
+	}
+
+	/**
+	 * Cria o sistema de obstáculos estáticos
+	 */
+	private createObstacleSystem(): void {
+		// Criar grupo de física ESTÁTICA para os obstáculos
+		this.obstacleGroup = this.physics.add.staticGroup();
+
+		// Distribuir obstáculos pelo mapa
+		const numObstacles = 30; // Quantidade de obstáculos
+		const worldWidth = 4000;
+		const worldHeight = 4000;
+		const minDistanceFromCenter = 200; // Distância mínima do centro (onde as naves spawnam)
+		const minDistanceBetweenObstacles = 100; // Distância mínima entre obstáculos
+
+		const obstaclePositions: { x: number; y: number }[] = [];
+
+		for (let i = 0; i < numObstacles; i++) {
+			let x: number = 0;
+			let y: number = 0;
+			let validPosition = false;
+			let attempts = 0;
+			const maxAttempts = 50; // Máximo de tentativas para encontrar posição válida
+
+			while (attempts < maxAttempts && !validPosition) {
+				x = Phaser.Math.Between(-worldWidth / 2 + 100, worldWidth / 2 - 100);
+				y = Phaser.Math.Between(-worldHeight / 2 + 100, worldHeight / 2 - 100);
+				attempts++;
+
+				// Calcular distância do centro
+				const distanceFromCenter = Math.sqrt(x * x + y * y);
+
+				// Verificar se a posição é válida
+				const tooCloseToCenter = this.isTooCloseToCenter(x, y, minDistanceFromCenter);
+				const tooCloseToOthers = this.isTooCloseToOtherObstacles(
+					x,
+					y,
+					obstaclePositions,
+					minDistanceBetweenObstacles
+				);
+
+				console.log(
+					`🔍 Obstáculo ${i + 1}, Tentativa ${attempts}: (${Math.round(x)}, ${Math.round(y)}) - Dist. Centro: ${Math.round(distanceFromCenter)}px - Perto Centro: ${tooCloseToCenter} - Perto Outros: ${tooCloseToOthers}`
+				);
+
+				if (!tooCloseToCenter && !tooCloseToOthers) {
+					validPosition = true;
+					console.log(`✅ Posição válida encontrada para obstáculo ${i + 1}!`);
+				}
+			}
+
+			// Só criar obstáculo se encontrou posição válida
+			if (validPosition) {
+				const obstacle = new Obstacle(this, x, y);
+				this.obstacles.push(obstacle);
+				this.obstacleGroup.add(obstacle.sprite);
+				obstaclePositions.push({ x, y });
+				console.log(`🪨 Obstáculo ${i + 1} criado em (${Math.round(x)}, ${Math.round(y)})`);
+			} else {
+				console.log(
+					`❌ Não foi possível encontrar posição válida para obstáculo ${i + 1} após ${maxAttempts} tentativas`
+				);
+			}
+		}
+
+		// Configurar colisões com as naves
+		this.physics.add.collider(this.mothership.sprite, this.obstacleGroup);
+		this.physics.add.collider(this.explorationShip.sprite, this.obstacleGroup);
+
+		console.log(`🪨 ${this.obstacles.length} obstáculos criados no mapa`);
+	}
+
+	/**
+	 * Verifica se a posição está muito próxima do centro do mapa
+	 */
+	private isTooCloseToCenter(x: number, y: number, minDistance: number): boolean {
+		const distanceFromCenter = Math.sqrt(x * x + y * y);
+		return distanceFromCenter < minDistance;
+	}
+
+	/**
+	 * Verifica se a posição está muito próxima de outros obstáculos
+	 */
+	private isTooCloseToOtherObstacles(
+		x: number,
+		y: number,
+		positions: { x: number; y: number }[],
+		minDistance: number
+	): boolean {
+		for (const pos of positions) {
+			const distance = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
+			if (distance < minDistance) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
