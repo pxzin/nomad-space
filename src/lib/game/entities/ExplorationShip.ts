@@ -30,7 +30,14 @@ export class ExplorationShip {
 	// Sistema de movimento automático (para retorno à Nave-Mãe)
 	private targetPosition: { x: number; y: number } | null = null;
 	private readonly AUTO_MOVE_SPEED = 250; // Velocidade do movimento automático (mais rápida que a Nave-Mãe)
-	private readonly ARRIVAL_THRESHOLD = 20; // Distância para considerar que chegou ao destino
+	private readonly ARRIVAL_THRESHOLD = 80; // Distância para considerar que chegou ao destino (e iniciar órbita)
+
+	// Sistema de órbita ao redor da Nave-Mãe
+	private isOrbiting: boolean = false;
+	private orbitAngle: number = 0; // Ângulo atual da órbita (em radianos)
+	private readonly ORBIT_RADIUS = 100; // Raio da órbita ao redor da Nave-Mãe
+	private readonly ORBIT_SPEED = 0.02; // Velocidade angular (radianos por frame)
+	private orbitTarget: { x: number; y: number } | null = null; // Centro da órbita (posição da Nave-Mãe)
 
 	constructor(scene: Scene, x: number, y: number) {
 		this.scene = scene;
@@ -113,6 +120,11 @@ export class ExplorationShip {
 	setActive(active: boolean): void {
 		this.isActive = active;
 
+		// Se ativar controle manual, parar órbita
+		if (active && this.isOrbiting) {
+			this.stopOrbiting();
+		}
+
 		// Feedback visual quando ativa
 		if (active) {
 			this.sprite.setAlpha(1);
@@ -172,6 +184,52 @@ export class ExplorationShip {
 	}
 
 	/**
+	 * Inicia órbita ao redor de um ponto (geralmente a Nave-Mãe)
+	 */
+	startOrbiting(centerX: number, centerY: number, startAngle?: number): void {
+		this.isOrbiting = true;
+		this.orbitTarget = { x: centerX, y: centerY };
+
+		// Se não especificado, calcular ângulo inicial baseado na posição atual
+		if (startAngle !== undefined) {
+			this.orbitAngle = startAngle;
+		} else {
+			// Calcular ângulo baseado na posição atual relativa ao centro
+			const dx = this.sprite.x - centerX;
+			const dy = this.sprite.y - centerY;
+			this.orbitAngle = Math.atan2(dy, dx);
+		}
+
+		console.log(`🌀 Nave de Exploração iniciou órbita ao redor de (${Math.round(centerX)}, ${Math.round(centerY)})`);
+	}
+
+	/**
+	 * Para a órbita
+	 */
+	stopOrbiting(): void {
+		this.isOrbiting = false;
+		this.orbitTarget = null;
+		console.log('⏹️ Órbita da Nave de Exploração interrompida');
+	}
+
+	/**
+	 * Verifica se está orbitando
+	 */
+	getIsOrbiting(): boolean {
+		return this.isOrbiting;
+	}
+
+	/**
+	 * Atualiza o centro da órbita (para seguir a Nave-Mãe em movimento)
+	 */
+	updateOrbitCenter(centerX: number, centerY: number): void {
+		if (this.orbitTarget) {
+			this.orbitTarget.x = centerX;
+			this.orbitTarget.y = centerY;
+		}
+	}
+
+	/**
 	 * Update loop - processa input e movimento
 	 */
 	update(): void {
@@ -182,8 +240,26 @@ export class ExplorationShip {
 		// Reset da aceleração
 		body.setAcceleration(0);
 
-		// Processar movimento automático (prioridade sobre controle manual)
-		if (this.targetPosition) {
+		// PRIORIDADE 1: Processar órbita (quando a nave está orbitando a Nave-Mãe)
+		if (this.isOrbiting && this.orbitTarget) {
+			// Incrementar ângulo orbital
+			this.orbitAngle += this.ORBIT_SPEED;
+
+			// Normalizar ângulo (manter entre 0 e 2π)
+			if (this.orbitAngle > Math.PI * 2) {
+				this.orbitAngle -= Math.PI * 2;
+			}
+
+			// Calcular nova posição orbital
+			const targetX = this.orbitTarget.x + this.ORBIT_RADIUS * Math.cos(this.orbitAngle);
+			const targetY = this.orbitTarget.y + this.ORBIT_RADIUS * Math.sin(this.orbitAngle);
+
+			// Mover nave para a posição orbital (movimento suave)
+			this.sprite.setPosition(targetX, targetY);
+			body.setVelocity(0, 0); // Zerar velocidade para movimento direto
+		}
+		// PRIORIDADE 2: Processar movimento automático (retorno à Nave-Mãe)
+		else if (this.targetPosition) {
 			const distance = Phaser.Math.Distance.Between(
 				this.sprite.x,
 				this.sprite.y,
@@ -191,10 +267,11 @@ export class ExplorationShip {
 				this.targetPosition.y
 			);
 
-			// Se chegou no destino, parar
+			// Se chegou perto do destino, iniciar órbita
 			if (distance < this.ARRIVAL_THRESHOLD) {
 				this.targetPosition = null;
 				body.setVelocity(0, 0);
+				// Nota: A órbita será iniciada externamente pela MainScene
 			} else {
 				// Mover em direção ao alvo usando physics.moveTo
 				this.scene.physics.moveTo(
@@ -205,7 +282,7 @@ export class ExplorationShip {
 				);
 			}
 		}
-		// Só processar input manual se não estiver em movimento automático e se estiver ativa
+		// PRIORIDADE 3: Processar input manual (quando o jogador está controlando)
 		else if (this.isActive) {
 			let accelerationX = 0;
 			let accelerationY = 0;

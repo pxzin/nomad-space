@@ -300,6 +300,44 @@ export class MainScene extends Scene {
 		this.mothership.update();
 		this.explorationShip.update();
 
+		// Atualizar destino da Nave de Exploração se estiver retornando (seguir Nave-Mãe em movimento)
+		if (
+			this.explorationShip.isAutoMoving() &&
+			!this.explorationShip.getIsActive() &&
+			!this.explorationShip.getIsOrbiting()
+		) {
+			// Atualizar destino para posição atual da Nave-Mãe
+			const mothershipPos = this.mothership.getPosition();
+			this.explorationShip.setTargetPosition(mothershipPos.x, mothershipPos.y);
+		}
+
+		// Detectar se a Nave de Exploração chegou perto da Nave-Mãe para iniciar órbita
+		if (
+			!this.explorationShip.getIsOrbiting() &&
+			!this.explorationShip.isAutoMoving() &&
+			!this.explorationShip.getIsActive()
+		) {
+			const mothershipPos = this.mothership.getPosition();
+			const explorationPos = this.explorationShip.getPosition();
+			const distance = Phaser.Math.Distance.Between(
+				explorationPos.x,
+				explorationPos.y,
+				mothershipPos.x,
+				mothershipPos.y
+			);
+
+			// Se está perto da Nave-Mãe e não está ativa, iniciar órbita
+			if (distance < 100) {
+				this.explorationShip.startOrbiting(mothershipPos.x, mothershipPos.y);
+			}
+		}
+
+		// Atualizar centro da órbita (caso a Nave-Mãe se mova)
+		if (this.explorationShip.getIsOrbiting()) {
+			const mothershipPos = this.mothership.getPosition();
+			this.explorationShip.updateOrbitCenter(mothershipPos.x, mothershipPos.y);
+		}
+
 		// Atualizar background
 		this.background.update(delta);
 

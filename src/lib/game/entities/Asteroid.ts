@@ -34,7 +34,10 @@ export class Asteroid {
 		// Adicionar física ao sprite
 		this.scene.physics.add.existing(this.sprite);
 		const body = this.sprite.body as Phaser.Physics.Arcade.Body;
-		body.setCircle(this.size / 2);
+
+		// Usar corpo circular centralizado (Graphics tem origin em 0,0)
+		const radius = this.size / 2;
+		body.setCircle(radius, -radius, -radius);
 
 		// Posicionar sprite
 		this.sprite.setPosition(x, y);

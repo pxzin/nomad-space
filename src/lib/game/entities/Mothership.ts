@@ -117,6 +117,12 @@ export class Mothership {
 	setActive(active: boolean): void {
 		this.isActive = active;
 
+		// Se ativar controle manual, cancelar movimento automático
+		if (active && this.targetPosition) {
+			this.cancelAutoMovement();
+			console.log('🛑 Movimento automático da Nave-Mãe cancelado - controle manual assumido');
+		}
+
 		// Feedback visual quando ativa
 		if (active) {
 			this.sprite.setAlpha(1);
