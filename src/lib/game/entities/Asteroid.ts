@@ -20,7 +20,7 @@ export class Asteroid {
 		if (resourceType) {
 			this.resourceType = resourceType;
 		} else {
-			const types = [ResourceType.IRON, ResourceType.SILICON, ResourceType.HYDROGEN];
+			const types = [ResourceType.IRON_ORE, ResourceType.RAW_SILICON, ResourceType.COSMIC_ICE];
 			this.resourceType = types[Math.floor(Math.random() * types.length)];
 		}
 
@@ -58,18 +58,21 @@ export class Asteroid {
 		let strokeColor: number;
 
 		switch (this.resourceType) {
-			case ResourceType.IRON:
-				fillColor = 0x8b7355; // Marrom (ferro)
+			case ResourceType.IRON_ORE:
+				fillColor = 0x8b7355; // Marrom (minério de ferro)
 				strokeColor = 0x654321;
 				break;
-			case ResourceType.SILICON:
-				fillColor = 0x7b68ee; // Roxo azulado (silício)
-				strokeColor = 0x483d8b;
+			case ResourceType.RAW_SILICON:
+				fillColor = 0xc0c0c0; // Cinza prateado (silício bruto)
+				strokeColor = 0x808080;
 				break;
-			case ResourceType.HYDROGEN:
-				fillColor = 0x4682b4; // Azul claro (hidrogênio)
-				strokeColor = 0x1e3a5f;
+			case ResourceType.COSMIC_ICE:
+				fillColor = 0x87ceeb; // Azul claro (gelo cósmico)
+				strokeColor = 0x4682b4;
 				break;
+			default:
+				fillColor = 0x696969; // Cinza escuro (padrão)
+				strokeColor = 0x404040;
 		}
 
 		this.sprite.fillStyle(fillColor, 1);

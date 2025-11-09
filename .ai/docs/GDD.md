@@ -140,6 +140,11 @@ O jogador comanda uma **Nave-Mãe**, uma base móvel que serve como seu lar e pr
     -   **Hangares**: Permitem a construção e armazenamento de Naves de Exploração.
     -   **Armazenamento**: Módulos que aumentam a capacidade máxima de recursos.
 
+#### Custos Iniciais de Construção
+- **Refinaria**: 50 Minério de Ferro + 25 Silício Bruto.
+- **Fábrica**: 25 Placas de Ferro + 10 Wafers de Silício.
+- **Laboratório**: 20 Placas de Ferro + 15 Wafers de Silício.
+
 ### 4. Gerenciamento de Recursos
 
 A economia do jogo é baseada em uma cadeia de produção de 4 níveis.

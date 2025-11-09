@@ -2,18 +2,28 @@
  * Tipos de recursos disponíveis no jogo
  */
 export enum ResourceType {
-	IRON = 'iron',
-	SILICON = 'silicon',
-	HYDROGEN = 'hydrogen'
+	// Recursos Brutos (coletados de asteroides)
+	IRON_ORE = 'iron_ore',
+	RAW_SILICON = 'raw_silicon',
+	COSMIC_ICE = 'cosmic_ice',
+	// Materiais Refinados (processados pela Refinaria)
+	IRON_PLATE = 'iron_plate',
+	SILICON_WAFER = 'silicon_wafer',
+	PURIFIED_WATER = 'purified_water'
 }
 
 /**
  * Interface para os recursos do jogador
  */
 export interface Resources {
-	iron: number;
-	silicon: number;
-	hydrogen: number;
+	// Recursos Brutos
+	iron_ore: number;
+	raw_silicon: number;
+	cosmic_ice: number;
+	// Materiais Refinados
+	iron_plate: number;
+	silicon_wafer: number;
+	purified_water: number;
 }
 
 /**
@@ -28,9 +38,14 @@ export class ResourceManager {
 	private constructor() {
 		// Inicializar recursos em 0
 		this.resources = {
-			iron: 0,
-			silicon: 0,
-			hydrogen: 0
+			// Recursos Brutos
+			iron_ore: 0,
+			raw_silicon: 0,
+			cosmic_ice: 0,
+			// Materiais Refinados
+			iron_plate: 0,
+			silicon_wafer: 0,
+			purified_water: 0
 		};
 	}
 
@@ -56,12 +71,20 @@ export class ResourceManager {
 	 */
 	getResource(type: ResourceType): number {
 		switch (type) {
-			case ResourceType.IRON:
-				return this.resources.iron;
-			case ResourceType.SILICON:
-				return this.resources.silicon;
-			case ResourceType.HYDROGEN:
-				return this.resources.hydrogen;
+			// Recursos Brutos
+			case ResourceType.IRON_ORE:
+				return this.resources.iron_ore;
+			case ResourceType.RAW_SILICON:
+				return this.resources.raw_silicon;
+			case ResourceType.COSMIC_ICE:
+				return this.resources.cosmic_ice;
+			// Materiais Refinados
+			case ResourceType.IRON_PLATE:
+				return this.resources.iron_plate;
+			case ResourceType.SILICON_WAFER:
+				return this.resources.silicon_wafer;
+			case ResourceType.PURIFIED_WATER:
+				return this.resources.purified_water;
 		}
 	}
 
@@ -70,14 +93,25 @@ export class ResourceManager {
 	 */
 	addResource(type: ResourceType, amount: number): void {
 		switch (type) {
-			case ResourceType.IRON:
-				this.resources.iron += amount;
+			// Recursos Brutos
+			case ResourceType.IRON_ORE:
+				this.resources.iron_ore += amount;
 				break;
-			case ResourceType.SILICON:
-				this.resources.silicon += amount;
+			case ResourceType.RAW_SILICON:
+				this.resources.raw_silicon += amount;
 				break;
-			case ResourceType.HYDROGEN:
-				this.resources.hydrogen += amount;
+			case ResourceType.COSMIC_ICE:
+				this.resources.cosmic_ice += amount;
+				break;
+			// Materiais Refinados
+			case ResourceType.IRON_PLATE:
+				this.resources.iron_plate += amount;
+				break;
+			case ResourceType.SILICON_WAFER:
+				this.resources.silicon_wafer += amount;
+				break;
+			case ResourceType.PURIFIED_WATER:
+				this.resources.purified_water += amount;
 				break;
 		}
 
@@ -89,10 +123,22 @@ export class ResourceManager {
 	 * Adiciona múltiplos recursos de uma vez
 	 * Útil para Dev Mode e recompensas
 	 */
-	addResources(iron: number, silicon: number, hydrogen: number): void {
-		this.resources.iron += iron;
-		this.resources.silicon += silicon;
-		this.resources.hydrogen += hydrogen;
+	addResources(
+		iron_ore: number = 0,
+		raw_silicon: number = 0,
+		cosmic_ice: number = 0,
+		iron_plate: number = 0,
+		silicon_wafer: number = 0,
+		purified_water: number = 0
+	): void {
+		// Recursos Brutos
+		this.resources.iron_ore += iron_ore;
+		this.resources.raw_silicon += raw_silicon;
+		this.resources.cosmic_ice += cosmic_ice;
+		// Materiais Refinados
+		this.resources.iron_plate += iron_plate;
+		this.resources.silicon_wafer += silicon_wafer;
+		this.resources.purified_water += purified_water;
 
 		// Notificar listeners (HUD)
 		this.notifyListeners();
@@ -108,14 +154,25 @@ export class ResourceManager {
 		}
 
 		switch (type) {
-			case ResourceType.IRON:
-				this.resources.iron -= amount;
+			// Recursos Brutos
+			case ResourceType.IRON_ORE:
+				this.resources.iron_ore -= amount;
 				break;
-			case ResourceType.SILICON:
-				this.resources.silicon -= amount;
+			case ResourceType.RAW_SILICON:
+				this.resources.raw_silicon -= amount;
 				break;
-			case ResourceType.HYDROGEN:
-				this.resources.hydrogen -= amount;
+			case ResourceType.COSMIC_ICE:
+				this.resources.cosmic_ice -= amount;
+				break;
+			// Materiais Refinados
+			case ResourceType.IRON_PLATE:
+				this.resources.iron_plate -= amount;
+				break;
+			case ResourceType.SILICON_WAFER:
+				this.resources.silicon_wafer -= amount;
+				break;
+			case ResourceType.PURIFIED_WATER:
+				this.resources.purified_water -= amount;
 				break;
 		}
 
@@ -127,10 +184,22 @@ export class ResourceManager {
 	 * Consome múltiplos recursos de uma vez
 	 * Usado para construção de módulos
 	 */
-	consumeResources(iron: number, silicon: number, hydrogen: number): void {
-		this.resources.iron -= iron;
-		this.resources.silicon -= silicon;
-		this.resources.hydrogen -= hydrogen;
+	consumeResources(
+		iron_ore: number = 0,
+		raw_silicon: number = 0,
+		cosmic_ice: number = 0,
+		iron_plate: number = 0,
+		silicon_wafer: number = 0,
+		purified_water: number = 0
+	): void {
+		// Recursos Brutos
+		this.resources.iron_ore -= iron_ore;
+		this.resources.raw_silicon -= raw_silicon;
+		this.resources.cosmic_ice -= cosmic_ice;
+		// Materiais Refinados
+		this.resources.iron_plate -= iron_plate;
+		this.resources.silicon_wafer -= silicon_wafer;
+		this.resources.purified_water -= purified_water;
 
 		// Notificar listeners (HUD)
 		this.notifyListeners();
@@ -165,9 +234,14 @@ export class ResourceManager {
 	 */
 	reset(): void {
 		this.resources = {
-			iron: 0,
-			silicon: 0,
-			hydrogen: 0
+			// Recursos Brutos
+			iron_ore: 0,
+			raw_silicon: 0,
+			cosmic_ice: 0,
+			// Materiais Refinados
+			iron_plate: 0,
+			silicon_wafer: 0,
+			purified_water: 0
 		};
 		this.notifyListeners();
 	}

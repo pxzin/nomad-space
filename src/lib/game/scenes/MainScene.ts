@@ -7,6 +7,7 @@ import { ParallaxBackground } from '../systems/ParallaxBackground';
 import { DevMode } from '../utils/DevMode';
 import { ResourceManager } from '../managers/ResourceManager';
 import { SlotManager } from '../managers/SlotManager';
+import { RefineryManager } from '../managers/RefineryManager';
 import type { ModuleType } from '../types/ModuleTypes';
 import { MODULE_CATALOG } from '../types/ModuleTypes';
 
@@ -24,6 +25,7 @@ export class MainScene extends Scene {
 	private debugText?: Phaser.GameObjects.Text;
 	private devMode: DevMode;
 	private resourceManager: ResourceManager;
+	private refineryManager: RefineryManager;
 	private bufferZoneGraphics?: Phaser.GameObjects.Graphics;
 	private tabKey!: Phaser.Input.Keyboard.Key;
 	private hudScene!: Phaser.Scene;
@@ -57,6 +59,9 @@ export class MainScene extends Scene {
 		this.devMode = DevMode.getInstance();
 		this.resourceManager = ResourceManager.getInstance();
 		this.slotManager = SlotManager.getInstance();
+		this.refineryManager = RefineryManager.getInstance();
+		// Conectar RefineryManager ao SlotManager
+		this.refineryManager.setSlotManager(this.slotManager);
 	}
 
 	/**
@@ -316,6 +321,9 @@ export class MainScene extends Scene {
 		// Atualizar ambas as naves
 		this.mothership.update();
 		this.explorationShip.update();
+
+		// Atualizar sistema de refinarias
+		this.refineryManager.update(time);
 
 		// Atualizar destino da Nave de Exploração se estiver retornando (seguir Nave-Mãe em movimento)
 		if (
@@ -1002,9 +1010,12 @@ export class MainScene extends Scene {
 
 		const resources = this.resourceManager.getResources();
 		const canAfford =
-			resources.iron >= module.cost.iron &&
-			resources.silicon >= module.cost.silicon &&
-			resources.hydrogen >= module.cost.hydrogen;
+			resources.iron_ore >= module.cost.iron_ore &&
+			resources.raw_silicon >= module.cost.raw_silicon &&
+			resources.cosmic_ice >= module.cost.cosmic_ice &&
+			resources.iron_plate >= module.cost.iron_plate &&
+			resources.silicon_wafer >= module.cost.silicon_wafer &&
+			resources.purified_water >= module.cost.purified_water;
 
 		if (!canAfford) {
 			console.error('❌ Recursos insuficientes para instalar', module.name);
@@ -1013,9 +1024,12 @@ export class MainScene extends Scene {
 
 		// Consumir recursos
 		this.resourceManager.consumeResources(
-			module.cost.iron,
-			module.cost.silicon,
-			module.cost.hydrogen
+			module.cost.iron_ore,
+			module.cost.raw_silicon,
+			module.cost.cosmic_ice,
+			module.cost.iron_plate,
+			module.cost.silicon_wafer,
+			module.cost.purified_water
 		);
 
 		// Instalar módulo no slot

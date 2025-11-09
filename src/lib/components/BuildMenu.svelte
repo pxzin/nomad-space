@@ -32,9 +32,12 @@
 	// Verifica se o jogador tem recursos suficientes
 	function canAfford(module: Module): boolean {
 		return (
-			resources.iron >= module.cost.iron &&
-			resources.silicon >= module.cost.silicon &&
-			resources.hydrogen >= module.cost.hydrogen
+			resources.iron_ore >= module.cost.iron_ore &&
+			resources.raw_silicon >= module.cost.raw_silicon &&
+			resources.cosmic_ice >= module.cost.cosmic_ice &&
+			resources.iron_plate >= module.cost.iron_plate &&
+			resources.silicon_wafer >= module.cost.silicon_wafer &&
+			resources.purified_water >= module.cost.purified_water
 		);
 	}
 </script>
@@ -73,15 +76,38 @@
 								<h3>{module.name}</h3>
 								<p class="module-description">{module.description}</p>
 								<div class="module-cost">
-									<span class:insufficient={resources.iron < module.cost.iron}>
-										🔩 {module.cost.iron}
-									</span>
-									<span class:insufficient={resources.silicon < module.cost.silicon}>
-										💎 {module.cost.silicon}
-									</span>
-									<span class:insufficient={resources.hydrogen < module.cost.hydrogen}>
-										⚗️ {module.cost.hydrogen}
-									</span>
+									<!-- Recursos Brutos -->
+									{#if module.cost.iron_ore > 0}
+										<span class:insufficient={resources.iron_ore < module.cost.iron_ore}>
+											🟤 {module.cost.iron_ore}
+										</span>
+									{/if}
+									{#if module.cost.raw_silicon > 0}
+										<span class:insufficient={resources.raw_silicon < module.cost.raw_silicon}>
+											⚪ {module.cost.raw_silicon}
+										</span>
+									{/if}
+									{#if module.cost.cosmic_ice > 0}
+										<span class:insufficient={resources.cosmic_ice < module.cost.cosmic_ice}>
+											🔵 {module.cost.cosmic_ice}
+										</span>
+									{/if}
+									<!-- Materiais Refinados -->
+									{#if module.cost.iron_plate > 0}
+										<span class:insufficient={resources.iron_plate < module.cost.iron_plate}>
+											🔩 {module.cost.iron_plate}
+										</span>
+									{/if}
+									{#if module.cost.silicon_wafer > 0}
+										<span class:insufficient={resources.silicon_wafer < module.cost.silicon_wafer}>
+											💎 {module.cost.silicon_wafer}
+										</span>
+									{/if}
+									{#if module.cost.purified_water > 0}
+										<span class:insufficient={resources.purified_water < module.cost.purified_water}>
+											⚗️ {module.cost.purified_water}
+										</span>
+									{/if}
 								</div>
 							</div>
 						</button>

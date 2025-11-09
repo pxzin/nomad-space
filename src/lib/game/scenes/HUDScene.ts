@@ -7,9 +7,14 @@ import { ResourceManager, type Resources } from '../managers/ResourceManager';
  */
 export class HUDScene extends Scene {
 	private resourceManager: ResourceManager;
-	private ironText!: Phaser.GameObjects.Text;
-	private siliconText!: Phaser.GameObjects.Text;
-	private hydrogenText!: Phaser.GameObjects.Text;
+	// Textos de recursos brutos
+	private ironOreText!: Phaser.GameObjects.Text;
+	private rawSiliconText!: Phaser.GameObjects.Text;
+	private cosmicIceText!: Phaser.GameObjects.Text;
+	// Textos de materiais refinados
+	private ironPlateText!: Phaser.GameObjects.Text;
+	private siliconWaferText!: Phaser.GameObjects.Text;
+	private purifiedWaterText!: Phaser.GameObjects.Text;
 	private recallButton!: Phaser.GameObjects.Container;
 	private recallButtonBg!: Phaser.GameObjects.Rectangle;
 	private recallButtonText!: Phaser.GameObjects.Text;
@@ -31,39 +36,72 @@ export class HUDScene extends Scene {
 		// Posição inicial no canto superior direito
 		const startX = this.cameras.main.width - 20;
 		const startY = 20;
-		const lineHeight = 30;
+		const lineHeight = 28;
 
 		// Estilo de texto para o HUD
 		const textStyle = {
 			fontFamily: 'Fira Code',
-			fontSize: '16px',
+			fontSize: '15px',
 			color: '#ffffff',
 			backgroundColor: '#1a1a2e',
 			padding: { x: 10, y: 5 }
 		};
 
-		// Título do painel de recursos
+		let currentY = startY;
+
+		// === RECURSOS BRUTOS ===
 		this.add
-			.text(startX, startY, '📦 RECURSOS', {
+			.text(startX, currentY, '⛏️ RECURSOS BRUTOS', {
 				...textStyle,
-				fontSize: '18px',
-				color: '#2ecc71'
+				fontSize: '17px',
+				color: '#e67e22'
 			})
 			.setOrigin(1, 0);
+		currentY += lineHeight;
 
-		// Ferro (🔩)
-		this.ironText = this.add
-			.text(startX, startY + lineHeight, '🔩 Ferro: 0', textStyle)
+		// Minério de Ferro
+		this.ironOreText = this.add
+			.text(startX, currentY, '🟤 Minério de Ferro: 0', textStyle)
 			.setOrigin(1, 0);
+		currentY += lineHeight;
 
-		// Silício (💎)
-		this.siliconText = this.add
-			.text(startX, startY + lineHeight * 2, '💎 Silício: 0', textStyle)
+		// Silício Bruto
+		this.rawSiliconText = this.add
+			.text(startX, currentY, '⚪ Silício Bruto: 0', textStyle)
 			.setOrigin(1, 0);
+		currentY += lineHeight;
 
-		// Hidrogênio (⚗️)
-		this.hydrogenText = this.add
-			.text(startX, startY + lineHeight * 3, '⚗️ Hidrogênio: 0', textStyle)
+		// Gelo Cósmico
+		this.cosmicIceText = this.add
+			.text(startX, currentY, '💠 Gelo Cósmico: 0', textStyle)
+			.setOrigin(1, 0);
+		currentY += lineHeight + 15;
+
+		// === MATERIAIS REFINADOS ===
+		this.add
+			.text(startX, currentY, '✨ MATERIAIS REFINADOS', {
+				...textStyle,
+				fontSize: '17px',
+				color: '#3498db'
+			})
+			.setOrigin(1, 0);
+		currentY += lineHeight;
+
+		// Placa de Ferro
+		this.ironPlateText = this.add
+			.text(startX, currentY, '🔩 Placa de Ferro: 0', textStyle)
+			.setOrigin(1, 0);
+		currentY += lineHeight;
+
+		// Bolacha de Silício
+		this.siliconWaferText = this.add
+			.text(startX, currentY, '💎 Bolacha de Silício: 0', textStyle)
+			.setOrigin(1, 0);
+		currentY += lineHeight;
+
+		// Água Purificada
+		this.purifiedWaterText = this.add
+			.text(startX, currentY, '⚗️ Água Purificada: 0', textStyle)
 			.setOrigin(1, 0);
 
 		// Listener para mudanças nos recursos
@@ -240,17 +278,22 @@ export class HUDScene extends Scene {
 	 * Atualiza o display de recursos
 	 */
 	private updateResourceDisplay(resources: Resources): void {
-		this.ironText.setText(`🔩 Ferro: ${resources.iron}`);
-		this.siliconText.setText(`💎 Silício: ${resources.silicon}`);
-		this.hydrogenText.setText(`⚗️ Hidrogênio: ${resources.hydrogen}`);
+		// Recursos Brutos
+		this.ironOreText.setText(`🟤 Minério de Ferro: ${resources.iron_ore}`);
+		this.rawSiliconText.setText(`⚪ Silício Bruto: ${resources.raw_silicon}`);
+		this.cosmicIceText.setText(`💠 Gelo Cósmico: ${resources.cosmic_ice}`);
+		// Materiais Refinados
+		this.ironPlateText.setText(`🔩 Placa de Ferro: ${resources.iron_plate}`);
+		this.siliconWaferText.setText(`💎 Bolacha de Silício: ${resources.silicon_wafer}`);
+		this.purifiedWaterText.setText(`⚗️ Água Purificada: ${resources.purified_water}`);
 	}
 
 	/**
 	 * Cria o painel de Dev Mode
 	 */
 	private createDevModePanel(): void {
-		const panelWidth = 300;
-		const panelHeight = 350;
+		const panelWidth = 320;
+		const panelHeight = 620;
 		const panelX = this.cameras.main.width / 2;
 		const panelY = this.cameras.main.height / 2;
 
@@ -284,49 +327,107 @@ export class HUDScene extends Scene {
 		const separator = this.add.rectangle(0, -panelHeight / 2 + 80, panelWidth - 40, 2, 0xe74c3c, 0.5);
 
 		// Criar botões de recursos
-		const buttonStartY = -panelHeight / 2 + 120;
-		const buttonSpacing = 60;
+		const buttonStartY = -panelHeight / 2 + 110;
+		const buttonSpacing = 45;
 
-		// Botão +10 Ferro
-		const ironBtn10 = this.createResourceButton(
+		// === RECURSOS BRUTOS ===
+		const rawTitle = this.add.text(0, buttonStartY, '⛏️ Recursos Brutos', {
+			fontFamily: 'Fira Code',
+			fontSize: '14px',
+			color: '#e67e22',
+			fontStyle: 'bold'
+		});
+		rawTitle.setOrigin(0.5);
+
+		// Botão +10 Minério de Ferro
+		const ironOreBtn = this.createResourceButton(
 			0,
-			buttonStartY,
-			'🔩 +10 Ferro',
-			() => this.resourceManager.addResources(10, 0, 0)
+			buttonStartY + 30,
+			'🟤 +10 Minério Ferro',
+			() => this.resourceManager.addResources(10),
+			0xe67e22
 		);
 
-		// Botão +10 Silício
-		const siliconBtn10 = this.createResourceButton(
+		// Botão +10 Silício Bruto
+		const rawSiliconBtn = this.createResourceButton(
 			0,
-			buttonStartY + buttonSpacing,
-			'💎 +10 Silício',
-			() => this.resourceManager.addResources(0, 10, 0)
+			buttonStartY + 30 + buttonSpacing,
+			'⚪ +10 Silício Bruto',
+			() => this.resourceManager.addResources(0, 10),
+			0xe67e22
 		);
 
-		// Botão +10 Hidrogênio
-		const hydrogenBtn10 = this.createResourceButton(
+		// Botão +10 Gelo Cósmico
+		const cosmicIceBtn = this.createResourceButton(
 			0,
-			buttonStartY + buttonSpacing * 2,
-			'⚗️ +10 Hidrogênio',
-			() => this.resourceManager.addResources(0, 0, 10)
+			buttonStartY + 30 + buttonSpacing * 2,
+			'💠 +10 Gelo Cósmico',
+			() => this.resourceManager.addResources(0, 0, 10),
+			0xe67e22
 		);
 
-		// Separador
+		// Separador 2
 		const separator2 = this.add.rectangle(
 			0,
-			buttonStartY + buttonSpacing * 3 - 20,
+			buttonStartY + 30 + buttonSpacing * 3 - 5,
 			panelWidth - 40,
 			2,
 			0xe74c3c,
 			0.5
 		);
 
-		// Botão +100 Todos
-		const allBtn100 = this.createResourceButton(
+		// === MATERIAIS REFINADOS ===
+		const refinedTitle = this.add.text(0, buttonStartY + 30 + buttonSpacing * 3 + 10, '✨ Materiais Refinados', {
+			fontFamily: 'Fira Code',
+			fontSize: '14px',
+			color: '#3498db',
+			fontStyle: 'bold'
+		});
+		refinedTitle.setOrigin(0.5);
+
+		// Botão +10 Placa de Ferro
+		const ironPlateBtn = this.createResourceButton(
 			0,
-			buttonStartY + buttonSpacing * 3 + 10,
+			buttonStartY + 30 + buttonSpacing * 3 + 40,
+			'🔩 +10 Placa Ferro',
+			() => this.resourceManager.addResources(0, 0, 0, 10),
+			0x3498db
+		);
+
+		// Botão +10 Bolacha de Silício
+		const siliconWaferBtn = this.createResourceButton(
+			0,
+			buttonStartY + 30 + buttonSpacing * 4 + 40,
+			'💎 +10 Bolacha Silício',
+			() => this.resourceManager.addResources(0, 0, 0, 0, 10),
+			0x3498db
+		);
+
+		// Botão +10 Água Purificada
+		const purifiedWaterBtn = this.createResourceButton(
+			0,
+			buttonStartY + 30 + buttonSpacing * 5 + 40,
+			'⚗️ +10 Água Purificada',
+			() => this.resourceManager.addResources(0, 0, 0, 0, 0, 10),
+			0x3498db
+		);
+
+		// Separador 3
+		const separator3 = this.add.rectangle(
+			0,
+			buttonStartY + 30 + buttonSpacing * 6 + 35,
+			panelWidth - 40,
+			2,
+			0xe74c3c,
+			0.5
+		);
+
+		// Botão +100 TODOS
+		const allBtn = this.createResourceButton(
+			0,
+			buttonStartY + 30 + buttonSpacing * 6 + 50,
 			'💰 +100 TODOS',
-			() => this.resourceManager.addResources(100, 100, 100),
+			() => this.resourceManager.addResources(100, 100, 100, 100, 100, 100),
 			0x2ecc71
 		);
 
@@ -336,11 +437,17 @@ export class HUDScene extends Scene {
 			title,
 			subtitle,
 			separator,
-			ironBtn10.container,
-			siliconBtn10.container,
-			hydrogenBtn10.container,
+			rawTitle,
+			ironOreBtn.container,
+			rawSiliconBtn.container,
+			cosmicIceBtn.container,
 			separator2,
-			allBtn100.container
+			refinedTitle,
+			ironPlateBtn.container,
+			siliconWaferBtn.container,
+			purifiedWaterBtn.container,
+			separator3,
+			allBtn.container
 		]);
 
 		// Inicialmente invisível
